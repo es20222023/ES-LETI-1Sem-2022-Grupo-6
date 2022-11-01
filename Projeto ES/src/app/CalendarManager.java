@@ -6,8 +6,11 @@ public class CalendarManager {
 
 	private ArrayList<CalendarEvent> calendarEvents = new ArrayList<CalendarEvent>();
 
-	public CalendarManager(ArrayList<CalendarEvent> calendarEvents) {
-		this.calendarEvents = calendarEvents;
+	public CalendarManager(String path, String newFilePath) {
+		this.calendarEvents = FileHandler.createNewCalendarFile(path, newFilePath);
 	}
 
+	public ArrayList<CalendarEvent> getCalendarEvents() {
+		return calendarEvents;
+	}
 }
