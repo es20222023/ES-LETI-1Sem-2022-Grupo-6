@@ -125,10 +125,20 @@ public class FileHandler {
 		return list;
 	}
 
+	/**
+	 * Funcao que cria ficheiro JSON a partir do JSONArray dado
+	 * 
+	 * @param arr
+	 * @param fileName
+	 */
+	
 	private static void writeJSONFile(JSONArray arr, String fileName) {
 		try {
-			FileWriter file = new FileWriter(fileName);
-			file.write(arr.toJSONString());
+			File dir = new File("files/json_files");
+			File file = new File(dir, fileName);
+			FileWriter fileWriter = new FileWriter(file);
+			fileWriter.write(arr.toJSONString());
+			fileWriter.close();
 		} catch (IOException e) {
 			System.out.println("Erro a escrever JSON file");
 			return;
