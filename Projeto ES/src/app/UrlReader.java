@@ -1,6 +1,10 @@
 package app;
 
+import java.io.BufferedReader;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -17,6 +21,14 @@ public class UrlReader {
 					+ "lEJxN1BxRPezjRT1QR3p2SwDmZgUO2b3oLG2ZTZ3Ivu9p1YqgIBhmq68WKHSlyobMvO9hDGka2jh2clSGvyMRzqXjdWjDag33ikg");
 			HttpURLConnection linkConnected= (HttpURLConnection) link.openConnection();
 			System.out.println(linkConnected.getResponseCode());
+			
+			if(linkConnected.getResponseCode()==301) {
+				InputStream is= linkConnected.getInputStream();
+				StringBuffer sb= new StringBuffer();
+				BufferedReader br= new BufferedReader(new InputStreamReader(is));
+				FileOutputStream file= new FileOutputStream("d://horário.txt");
+				
+			}
 			
 		} catch (IOException e) {
 			System.out.println("URL não é valido");
