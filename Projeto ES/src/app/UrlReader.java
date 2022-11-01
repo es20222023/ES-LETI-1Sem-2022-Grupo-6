@@ -1,10 +1,12 @@
 package app;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -27,7 +29,14 @@ public class UrlReader {
 				StringBuffer sb= new StringBuffer();
 				BufferedReader br= new BufferedReader(new InputStreamReader(is));
 				FileOutputStream file= new FileOutputStream("d://horário.txt");
-				
+				BufferedWriter bw= new BufferedWriter(new OutputStreamWriter(file));
+				String line= br.readLine();
+				while(line!=null) {
+					System.out.println(line);
+					bw.write(line);
+					bw.newLine();
+					line= br.readLine();
+				}
 			}
 			
 		} catch (IOException e) {
