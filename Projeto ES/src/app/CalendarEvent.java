@@ -23,8 +23,8 @@ public class CalendarEvent {
 	/**
 	 * Função que dá parse a uma string e retorna um objeto do tipo Date
 	 * 
-	 * @param date
-	 * @return
+	 * @param date - String de data que segue o formato yyyymmddTHHmmssZ
+	 * @return dateToReturn - objeto Date que guarda a data
 	 */
 
 	private Date parseDate(String date) {

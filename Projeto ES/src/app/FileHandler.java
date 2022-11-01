@@ -11,7 +11,7 @@ public class FileHandler {
 	 * Funcao que le textfile e retorna uma arraylist em que cada elemento é um dos
 	 * eventos do calendario em texto
 	 * 
-	 * @param path
+	 * @param path - caminho do ficheiro que se quer ler
 	 * @return calendar
 	 * @throws FileNotFoundException
 	 */
@@ -27,16 +27,20 @@ public class FileHandler {
 		while (scanner.hasNextLine()) {
 			String line = scanner.nextLine();
 
-			calendarEvent += line + "\n";
+//			calendarEvent += line + "\n";
 			
 			if (line.equals("BEGIN:VEVENT"))
 				calendarEvent = "";
 
 			else if (line.equals("END:VEVENT"))
 				calendar.add(calendarEvent);
+			else
+				calendarEvent += line + "\n";
 		}
 		return calendar;
 	}
+
+	
 
 	public static void main(String[] args) {
 		String path = "C:\\Users\\7jtom\\git\\ES-LETI-1Sem-2022-Grupo-6\\Projeto ES\\files\\thgas";
