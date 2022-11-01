@@ -2,19 +2,20 @@ package app;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.Date;
 
 public class CalendarEvent {
 
-	private Date dateStart;
-	private Date dateEnd;
+	private Instant dateStart;
+	private Instant dateEnd;
 	private String summary;
 	private String description;
 	private String location;
 
 	public CalendarEvent(String dateStart, String dateEnd, String summary, String description, String location) {
-		this.dateStart = parseDate(dateStart);
-		this.dateEnd = parseDate(dateEnd);
+		this.dateStart = parseDate(dateStart).toInstant();
+		this.dateEnd = parseDate(dateEnd).toInstant();
 		this.summary = summary;
 		this.description = description;
 		this.location = location;
@@ -39,11 +40,11 @@ public class CalendarEvent {
 		}
 	}
 
-	public Date getDateStart() {
+	public Instant getDateStart() {
 		return dateStart;
 	}
 
-	public Date getDateEnd() {
+	public Instant getDateEnd() {
 		return dateEnd;
 	}
 
@@ -58,5 +59,4 @@ public class CalendarEvent {
 	public String getLocation() {
 		return location;
 	}
-
 }
