@@ -20,6 +20,7 @@ public class FileHandlerTests {
 		try {
 			boolean isTwoEqual = FileUtils.contentEquals(file1, file2);
 			assertEquals(isTwoEqual, true);
+			file2.delete();
 			
 		} catch (IOException e) {
 			e.printStackTrace();
