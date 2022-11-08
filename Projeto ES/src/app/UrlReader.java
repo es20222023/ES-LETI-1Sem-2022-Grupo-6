@@ -18,23 +18,24 @@ public class UrlReader {
 		
 		try {
 			
-			URL link= new URL("http://fenix.iscte-iul.pt/publico/publicPersonICale"
+			URL link= new URL("https://fenix.iscte-iul.pt/publico/publicPersonICale"
 					+ "ndar.do?method=iCalendar&username=tamos@iscte.pt&password=56eL4iwoIkDYcylyIO0CXH0q2pDe"
 					+ "lEJxN1BxRPezjRT1QR3p2SwDmZgUO2b3oLG2ZTZ3Ivu9p1YqgIBhmq68WKHSlyobMvO9hDGka2jh2clSGvyMRzqXjdWjDag33ikg");
 			HttpURLConnection linkConnected= (HttpURLConnection) link.openConnection();
-			System.out.println(linkConnected.getResponseCode());
+			System.out.println(linkConnected.getResponseCode()); //codigo https ==201
 			
-			if(linkConnected.getResponseCode()==301) {
+			if(linkConnected.getResponseCode()==200) {
 				InputStream is= linkConnected.getInputStream();
 				StringBuffer sb= new StringBuffer();
 				BufferedReader br= new BufferedReader(new InputStreamReader(is));
-				FileOutputStream file= new FileOutputStream("d://horário.txt");
+				FileOutputStream file= new FileOutputStream("files/text_files/Horario.txt");
 				BufferedWriter bw= new BufferedWriter(new OutputStreamWriter(file));
 				String line= br.readLine();
 				while(line!=null) {
 					System.out.println(line);
 					bw.write(line);
 					bw.newLine();
+					bw.flush();
 					line= br.readLine();
 				}
 			}
@@ -47,3 +48,4 @@ public class UrlReader {
 	}
 
 }
+
