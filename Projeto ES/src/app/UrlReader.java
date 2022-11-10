@@ -2,6 +2,7 @@ package app;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,13 +15,14 @@ import java.net.URL;
 public class UrlReader {
 	
 	
-	public static void main(String[] args) {
+	
+	public static File Urlcatcher(String data, String nome) {
 		
-		try {
+try {
 			
-			URL link= new URL("https://fenix.iscte-iul.pt/publico/publicPersonICale"
-					+ "ndar.do?method=iCalendar&username=tamos@iscte.pt&password=56eL4iwoIkDYcylyIO0CXH0q2pDe"
-					+ "lEJxN1BxRPezjRT1QR3p2SwDmZgUO2b3oLG2ZTZ3Ivu9p1YqgIBhmq68WKHSlyobMvO9hDGka2jh2clSGvyMRzqXjdWjDag33ikg");
+			
+			URL link= new URL(data);
+			File f = new File("files/text_files/"+ nome + ".txt");
 			HttpURLConnection linkConnected= (HttpURLConnection) link.openConnection();
 			System.out.println(linkConnected.getResponseCode()); //codigo https ==201
 			
@@ -28,7 +30,8 @@ public class UrlReader {
 				InputStream is= linkConnected.getInputStream();
 				StringBuffer sb= new StringBuffer();
 				BufferedReader br= new BufferedReader(new InputStreamReader(is));
-				FileOutputStream file= new FileOutputStream("files/text_files/Horario.txt");
+				
+				FileOutputStream file= new FileOutputStream(f);
 				BufferedWriter bw= new BufferedWriter(new OutputStreamWriter(file));
 				String line= br.readLine();
 				while(line!=null) {
@@ -39,13 +42,27 @@ public class UrlReader {
 					line= br.readLine();
 				}
 			}
+			return f;
+			
+			
 			
 		} catch (IOException e) {
 			System.out.println("URL não é valido");
-			
-			
-		}
+		
+	}
+return null;
+	
+		
 	}
 
+
+
+	
+	
+	public static void main(String[] args) {
+		
+		Urlcatcher("https://fenix.iscte-iul.pt/publico/publicPersonICalendar.do?method=iCalendar&username=tamos@iscte.pt&password=56eL4iwoIkDYcylyIO0CXH0q2pDelEJxN1BxRPezjRT1QR3p2SwDmZgUO2b3oLG2ZTZ3Ivu9p1YqgIBhmq68WKHSlyobMvO9hDGka2jh2clSGvyMRzqXjdWjDag33ikg", "tghs");
+		}
+	
 }
 
