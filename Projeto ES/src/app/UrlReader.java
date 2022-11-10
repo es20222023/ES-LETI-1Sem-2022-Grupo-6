@@ -44,7 +44,7 @@ try {
 			}
 			return f;
 			
-			//catch
+			
 			
 		} catch (IOException e) {
 			System.out.println("URL não é valido");
