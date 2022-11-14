@@ -3,6 +3,7 @@ package app;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.format.DateTimeParseException;
 import java.util.Date;
 
 public class CalendarEvent {
@@ -14,8 +15,8 @@ public class CalendarEvent {
 	private String location;
 
 	public CalendarEvent(String dateStart, String dateEnd, String summary, String description, String location) {
-		this.dateStart = parseDate(dateStart).toInstant();
-		this.dateEnd = parseDate(dateEnd).toInstant();
+		this.dateStart = parseDate(dateStart);
+		this.dateEnd = parseDate(dateEnd);
 		this.summary = summary;
 		this.description = description;
 		this.location = location;
@@ -28,7 +29,8 @@ public class CalendarEvent {
 	 * @return dateToReturn - objeto Date que guarda a data
 	 */
 
-	private Date parseDate(String date) {
+	private Date modifyStringToDateFormat(String date) {
+		
 		date = date.replace("T", "");
 		SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
 		try {
@@ -40,6 +42,23 @@ public class CalendarEvent {
 		}
 	}
 
+	private Instant parseDate(String date) {
+		Instant instant;
+		try {
+			instant = Instant.parse(date);				//quando se descodifica o ficheiro JSON é mais simples fazer parse a data assim
+		} catch (DateTimeParseException e) {
+			Date d = modifyStringToDateFormat(date);	//já a data no ficheiro texto é mais simples dar parse como Date e só depois converter para Instant
+			return d.toInstant();
+		}
+
+		return instant;
+	}
+
+//	private String removeLineBreaks(String string) {
+//		string = string.replace("\\n", "");
+//		return string;
+//	}
+	
 	public Instant getDateStart() {
 		return dateStart;
 	}
@@ -58,5 +77,11 @@ public class CalendarEvent {
 
 	public String getLocation() {
 		return location;
+	}
+
+	public String toString() {
+		String string = "Data de início: " + getDateStart().toString() + "\nData de fim: " + getDateEnd().toString()
+				+ "\nSumario: " + getSummary() + "\nDescricao: " + getDescription() + "\nLocalizacao: " + getLocation();
+		return string;
 	}
 }

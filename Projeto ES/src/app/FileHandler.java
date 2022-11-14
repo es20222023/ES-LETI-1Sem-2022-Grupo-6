@@ -2,17 +2,27 @@ package app;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 public class FileHandler {
+
+	private static final String LOCATION = "LOCATION:";
+	private static final String DESCRIPTION = "DESCRIPTION:";
+	private static final String UID = "UID:";
+	private static final String SUMMARY = "SUMMARY:";
+	private static final String BEGINEVENT = "BEGIN:VEVENT";
+	private static final String ENDEVENT = "END:VEVENT";
+	private static final String DATESTART = "DTSTART:";
+	private static final String DATEEND = "DTEND:";
 
 	/**
 	 * Funcao que liga as funcoes desta classe, cria arraylist com elementos do
@@ -56,10 +66,10 @@ public class FileHandler {
 		while (scanner.hasNextLine()) {
 			String line = scanner.nextLine();
 
-			if (line.equals("BEGIN:VEVENT"))
+			if (line.equals(BEGINEVENT))
 				calendarEvent = "";
 
-			else if (line.equals("END:VEVENT"))
+			else if (line.equals(ENDEVENT))
 				calendarEvents.add(convertStringToCalendarEvent(calendarEvent));
 			else
 				calendarEvent += line + "\n";
@@ -76,11 +86,11 @@ public class FileHandler {
 
 	private static CalendarEvent convertStringToCalendarEvent(String event) {
 
-		String dateStart = getSubString(event, "DTSTART:", "DTEND:");
-		String dateEnd = getSubString(event, "DTEND:", "SUMMARY:");
-		String summary = getSubString(event, "SUMMARY:", "UID:");
-		String description = getSubString(event, "DESCRIPTION:", "LOCATION:");
-		String location = getSubString(event, "LOCATION:", "");
+		String dateStart = getSubString(event, DATESTART, DATEEND);
+		String dateEnd = getSubString(event, DATEEND, SUMMARY);
+		String summary = getSubString(event, SUMMARY, UID);
+		String description = getSubString(event, DESCRIPTION, LOCATION);
+		String location = getSubString(event, LOCATION, "");
 
 		return (new CalendarEvent(dateStart, dateEnd, summary, description, location));
 
@@ -114,8 +124,8 @@ public class FileHandler {
 		for (CalendarEvent event : calendarEvents) {
 			JSONObject obj = new JSONObject();
 
-			obj.put("dateStart", event.getDateStart());
-			obj.put("dateEnd", event.getDateEnd());
+			obj.put("dateStart", event.getDateStart().toString());
+			obj.put("dateEnd", event.getDateEnd().toString());
 			obj.put("summary", event.getSummary());
 			obj.put("description", event.getDescription());
 			obj.put("location", event.getLocation());
@@ -131,11 +141,11 @@ public class FileHandler {
 	 * @param arr
 	 * @param fileName
 	 */
-	
+
 	private static void writeJSONFile(JSONArray arr, String fileName) {
 		try {
 			File dir = new File("files/json_files");
-			File file = new File(dir, fileName);
+			File file = new File(dir, fileName);				// necessario para que o ficheiro va para o diretorio das json_files
 			FileWriter fileWriter = new FileWriter(file);
 			fileWriter.write(arr.toJSONString());
 			fileWriter.close();
@@ -143,5 +153,44 @@ public class FileHandler {
 			System.out.println("Erro a escrever JSON file");
 			return;
 		}
+	}
+
+	public static ArrayList<CalendarEvent> decodeJSONFile(String fileName) {
+
+		ArrayList<CalendarEvent> dataToReturn = new ArrayList<CalendarEvent>();
+
+		JSONParser parser = new JSONParser();
+
+		JSONArray a;
+		
+			try {
+				a = (JSONArray) parser.parse(new FileReader("files/json_files/" + fileName));
+			} catch (IOException | ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return null;
+			}
+		
+
+		for (Object o : a) {
+			JSONObject calendarEvent = (JSONObject) o;
+
+			String dateStart = (String) calendarEvent.get("dateStart");
+			String dateEnd = (String) calendarEvent.get("dateEnd");
+			String summary = (String) calendarEvent.get("summary");
+			String description = (String) calendarEvent.get("description");
+			String location = (String) calendarEvent.get("location");
+
+			CalendarEvent event = new CalendarEvent(dateStart, dateEnd, summary, description, location);
+			dataToReturn.add(event);
+
+		}
+		
+		return dataToReturn;
+	}
+
+	public static void main(String[] args) {
+		createNewCalendarFile("files/text_files/thgas.txt", "teste.json");
+//		decodeJSONFile("thgas.json");
 	}
 }
