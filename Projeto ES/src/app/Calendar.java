@@ -10,6 +10,10 @@ public class Calendar {
 		this.calendarEvents = FileHandler.createNewCalendarFile(path, newFilePath);
 	}
 
+	public Calendar(String jsonFile) {
+		this.calendarEvents = FileHandler.decodeJSONFile(jsonFile);
+	}
+
 	public ArrayList<CalendarEvent> getCalendarEvents() {
 		return calendarEvents;
 	}
