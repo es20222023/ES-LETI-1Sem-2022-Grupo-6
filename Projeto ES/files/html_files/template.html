@@ -1,0 +1,15 @@
+<html>
+  <head>
+    <title>Table</title>
+    <style>th { background: #333; color: white; font-weight: bold; padding: 6px; border: 1px solid #ccc; text-align: left; } </style>
+  </head>
+  <body>
+    <table>
+     <tr><th>Data</th><th>Localização</th><th>Sumário</th></tr>
+    {{#calendarEvents}}
+      <tr>
+        <td>{{getDateStartString}}</td><td>{{getLocation}}</td><td>{{getSummary}}</td>
+      </tr>
+    {{/calendarEvents}}
+  </body>
+</html>
