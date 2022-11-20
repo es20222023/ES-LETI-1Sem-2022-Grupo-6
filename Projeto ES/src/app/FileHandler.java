@@ -65,15 +65,15 @@ public class FileHandler {
 
 		while (scanner.hasNextLine()) {
 			String line = scanner.nextLine();
-
 			if (line.equals(BEGINEVENT))
 				calendarEvent = "";
 
 			else if (line.equals(ENDEVENT))
 				calendarEvents.add(convertStringToCalendarEvent(calendarEvent));
 			else
-				calendarEvent += line + "\n";
+				calendarEvent += line;
 		}
+		scanner.close();
 		return calendarEvents;
 	}
 
@@ -118,6 +118,7 @@ public class FileHandler {
 	 * @return
 	 */
 
+	@SuppressWarnings("unchecked")
 	private static JSONArray JSONEncoder(ArrayList<CalendarEvent> calendarEvents) {
 		JSONArray list = new JSONArray();
 
@@ -145,7 +146,7 @@ public class FileHandler {
 	private static void writeJSONFile(JSONArray arr, String fileName) {
 		try {
 			File dir = new File("files/json_files");
-			File file = new File(dir, fileName);				// necessario para que o ficheiro va para o diretorio das json_files
+			File file = new File(dir, fileName); // necessario para que o ficheiro va para o diretorio das json_files
 			FileWriter fileWriter = new FileWriter(file);
 			fileWriter.write(arr.toJSONString());
 			fileWriter.close();
@@ -162,15 +163,14 @@ public class FileHandler {
 		JSONParser parser = new JSONParser();
 
 		JSONArray a;
-		
-			try {
-				a = (JSONArray) parser.parse(new FileReader("files/json_files/" + fileName));
-			} catch (IOException | ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				return null;
-			}
-		
+
+		try {
+			a = (JSONArray) parser.parse(new FileReader("files/json_files/" + fileName));
+		} catch (IOException | ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
 
 		for (Object o : a) {
 			JSONObject calendarEvent = (JSONObject) o;
@@ -185,12 +185,12 @@ public class FileHandler {
 			dataToReturn.add(event);
 
 		}
-		
+		dataToReturn.sort(null);
 		return dataToReturn;
 	}
 
 	public static void main(String[] args) {
-		createNewCalendarFile("files/text_files/thgas.txt", "teste.json");
+		createNewCalendarFile("files/text_files/thgas.txt", "thgas.json");
 //		decodeJSONFile("thgas.json");
 	}
 }
