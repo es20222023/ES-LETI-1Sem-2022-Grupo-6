@@ -133,7 +133,7 @@ public class CalendarGUI {
 	}
 
 	private void openHTMLFile(String fileName) throws IOException {
-		File htmlFile = new File(HTML_FILES_PATH + fileName);
+		File htmlFile = new File(HTML_FILES_PATH + fileName + ".html");
 		Desktop.getDesktop().browse(htmlFile.toURI());
 	}
 
