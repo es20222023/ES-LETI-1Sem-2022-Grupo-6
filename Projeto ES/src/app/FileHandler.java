@@ -15,6 +15,8 @@ import org.json.simple.parser.ParseException;
 
 public class FileHandler {
 
+	private static final String JSON_FILES_PATH = "files/json_files/";
+	private static final String TEXT_FILES_PATH = "files/text_files/";
 	private static final String LOCATION = "LOCATION:";
 	private static final String DESCRIPTION = "DESCRIPTION:";
 	private static final String UID = "UID:";
@@ -34,14 +36,14 @@ public class FileHandler {
 	 * @return
 	 */
 
-	public static ArrayList<CalendarEvent> createNewCalendarFile(String schedulePath, String JSONFilePath) {
+	public static ArrayList<CalendarEvent> createNewCalendarFile(String fileName) {
 		try {
-			ArrayList<CalendarEvent> calendarEvents = readTextFile(schedulePath);
+			ArrayList<CalendarEvent> calendarEvents = readTextFile(fileName);
 			JSONArray arr = JSONEncoder(calendarEvents);
-			writeJSONFile(arr, JSONFilePath);
+			writeJSONFile(arr, fileName);
 			return calendarEvents;
 		} catch (FileNotFoundException e) {
-			System.out.println("Erro a tentar ler ficheiro texto do horário");
+			e.printStackTrace();
 			return null;
 		}
 	}
@@ -55,9 +57,9 @@ public class FileHandler {
 	 * @throws FileNotFoundException
 	 */
 
-	private static ArrayList<CalendarEvent> readTextFile(String path) throws FileNotFoundException {
+	private static ArrayList<CalendarEvent> readTextFile(String fileName) throws FileNotFoundException {
 
-		File text = new File(path);
+		File text = new File(TEXT_FILES_PATH + fileName + ".txt");
 		Scanner scanner = new Scanner(text);
 
 		ArrayList<CalendarEvent> calendarEvents = new ArrayList<CalendarEvent>();
@@ -146,7 +148,7 @@ public class FileHandler {
 	private static void writeJSONFile(JSONArray arr, String fileName) {
 		try {
 			File dir = new File("files/json_files");
-			File file = new File(dir, fileName); // necessario para que o ficheiro va para o diretorio das json_files
+			File file = new File(dir, fileName +".json"); // necessario para que o ficheiro va para o diretorio das json_files
 			FileWriter fileWriter = new FileWriter(file);
 			fileWriter.write(arr.toJSONString());
 			fileWriter.close();
@@ -165,9 +167,8 @@ public class FileHandler {
 		JSONArray a;
 
 		try {
-			a = (JSONArray) parser.parse(new FileReader("files/json_files/" + fileName));
+			a = (JSONArray) parser.parse(new FileReader(JSON_FILES_PATH + fileName + ".json"));
 		} catch (IOException | ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
 		}
@@ -190,7 +191,7 @@ public class FileHandler {
 	}
 
 	public static void main(String[] args) {
-		createNewCalendarFile("files/text_files/thgas.txt", "thgas.json");
+		createNewCalendarFile("thgas");
 //		decodeJSONFile("thgas.json");
 	}
 }
