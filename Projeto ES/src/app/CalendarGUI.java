@@ -15,13 +15,19 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Properties;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
+
+import org.jdatepicker.impl.JDatePanelImpl;
+import org.jdatepicker.impl.JDatePickerImpl;
+import org.jdatepicker.impl.UtilDateModel;
 
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
@@ -29,6 +35,8 @@ import com.github.mustachejava.MustacheFactory;
 
 public class CalendarGUI {
 
+	private static final int NUM_COLUMNS = 3;
+	private static final int NUM_ROWS = 10;
 	private static final String HTML_FILES_PATH = "files/html_files/";
 	private JFrame frame;
 
@@ -99,8 +107,9 @@ public class CalendarGUI {
 					FileHandler.createNewCalendarFile(name);
 				}
 				ArrayList<CalendarEvent> events = FileHandler.decodeJSONFile(name);
+
 				try {
-					if (dateStart.equals("") && dateEnd.equals(""))
+					if (dateStart.equals("") || dateEnd.equals(""))
 						createHTMLTable(events, null, null, name);
 					else
 						createHTMLTable(events, format.parse(dateStart).toInstant(), format.parse(dateEnd).toInstant(),
@@ -147,6 +156,36 @@ public class CalendarGUI {
 					|| c.getDateStart().equals(dateStart) || c.getDateStart().equals(dateEnd))
 				events.add(c);
 		return events;
+	}
+
+	private void addCalendarFrameContent() {
+		frame.setLayout(new GridLayout(NUM_ROWS + 2, NUM_COLUMNS));
+
+		UtilDateModel model = new UtilDateModel();
+		Properties p = new Properties();
+		p.put("text.today", "Today");
+		p.put("text.month", "Month");
+		p.put("text.year", "Year");
+		JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
+		JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());	//datePicker.getModel().getValue();
+
+		JLabel dateHeader = new JLabel("Date");
+		JLabel locationHeader = new JLabel("Location");
+		JLabel summaryHeader = new JLabel("Summary");
+
+		JComboBox box = new JComboBox<>(); // box.getSelectedIndex()
+		
+		
+		
+		box.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+		});
+
 	}
 
 	public static void main(String[] args) {
