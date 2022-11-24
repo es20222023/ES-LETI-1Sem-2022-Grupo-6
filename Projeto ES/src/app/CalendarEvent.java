@@ -13,13 +13,15 @@ public class CalendarEvent implements Comparable<CalendarEvent> {
 	private String summary;
 	private String description;
 	private String location;
+	private String username;
 
-	public CalendarEvent(String dateStart, String dateEnd, String summary, String description, String location) {
+	public CalendarEvent(String dateStart, String dateEnd, String summary, String description, String location, String username) {
 		this.dateStart = parseDate(dateStart);
 		this.dateEnd = parseDate(dateEnd);
 		this.summary = summary;
 		this.description = description;
 		this.location = location;
+		this.username = username;
 	}
 
 	/**
