@@ -1,6 +1,7 @@
 <!DOCTYPE html> 
 <html>
   <head>
+ 	<meta charset="utf-8">
     <title>table</title>
     <style>
     	td { padding: 6px; border: 1px solid #ccc; text-align: left; }
@@ -9,7 +10,7 @@
   </head>
   <body>
     <table>
-     <tr><th>Data</th><th>Localização</th><th>Sumário</th></tr>
+     <tr><th>Date</th><th>Location</th><th>Summary</th></tr>
     {{#events}}
       <tr>
         <td>{{getDateStartString}}</td><td>{{getLocation}}</td><td>{{getSummary}}</td>
