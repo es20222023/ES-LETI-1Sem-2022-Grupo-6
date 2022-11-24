@@ -71,7 +71,7 @@ public class FileHandler {
 				calendarEvent = "";
 
 			else if (line.equals(ENDEVENT))
-				calendarEvents.add(convertStringToCalendarEvent(calendarEvent));
+				calendarEvents.add(convertStringToCalendarEvent(calendarEvent,fileName));
 			else
 				calendarEvent += line;
 		}
@@ -86,7 +86,7 @@ public class FileHandler {
 	 * @return
 	 */
 
-	private static CalendarEvent convertStringToCalendarEvent(String event) {
+	private static CalendarEvent convertStringToCalendarEvent(String event, String username) {
 
 		String dateStart = getSubString(event, DATESTART, DATEEND);
 		String dateEnd = getSubString(event, DATEEND, SUMMARY);
@@ -94,7 +94,7 @@ public class FileHandler {
 		String description = getSubString(event, DESCRIPTION, LOCATION);
 		String location = getSubString(event, LOCATION, "");
 
-		return (new CalendarEvent(dateStart, dateEnd, summary, description, location));
+		return (new CalendarEvent(dateStart, dateEnd, summary, description, location,username));
 
 	}
 
@@ -182,7 +182,7 @@ public class FileHandler {
 			String description = (String) calendarEvent.get("description");
 			String location = (String) calendarEvent.get("location");
 
-			CalendarEvent event = new CalendarEvent(dateStart, dateEnd, summary, description, location);
+			CalendarEvent event = new CalendarEvent(dateStart, dateEnd, summary, description, location, fileName);
 			dataToReturn.add(event);
 
 		}
