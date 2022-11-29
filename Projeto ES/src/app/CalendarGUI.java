@@ -58,7 +58,7 @@ public class CalendarGUI {
 	}
 
 	private void addUserInputFrameContent(JFrame userInputFrame) {
-		userInputFrame.setLayout(new GridLayout(5, 3));
+		userInputFrame.setLayout(new GridLayout(5, 2));
 
 		JLabel askNameLabel = new JLabel("Introduza o seu nome", SwingConstants.CENTER);
 		JTextField askName = new JTextField();
@@ -159,37 +159,66 @@ public class CalendarGUI {
 	}
 
 	private void addCalendarFrameContent() {
-		frame.setLayout(new GridLayout(NUM_ROWS + 2, NUM_COLUMNS));
-
+		frame.setSize(500, 300);
+		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+//		frame.setLayout(new GridLayout(NUM_ROWS + 2, NUM_COLUMNS));
+		frame.setLayout(new GridLayout(2, NUM_COLUMNS));
+		
+		// componente datepicker
 		UtilDateModel model = new UtilDateModel();
 		Properties p = new Properties();
 		p.put("text.today", "Today");
 		p.put("text.month", "Month");
 		p.put("text.year", "Year");
 		JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
-		JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());	//datePicker.getModel().getValue();
+		JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter()); // datePicker.getModel().getValue();
+		
+		//componente Combobox
+		String[] numberOfRowsPerPage = { "5", "10", "15", "20" };
+		JComboBox box = new JComboBox<>(numberOfRowsPerPage); // box.getSelectedIndex()
+		
+		JButton refreshButton = new JButton("Carreguar eventos das datas escolhidas");
 
+		// componentes Header
 		JLabel dateHeader = new JLabel("Date");
 		JLabel locationHeader = new JLabel("Location");
 		JLabel summaryHeader = new JLabel("Summary");
-
-		JComboBox box = new JComboBox<>(); // box.getSelectedIndex()
 		
+		//TODO adicionar os eventos
+
+		frame.add(datePicker);
+		frame.add(box);
+		frame.add(refreshButton);
+		frame.add(dateHeader);
+		frame.add(locationHeader);
+		frame.add(summaryHeader);
+
+//		datePicker.addActionListener(new ActionListener() {
+//			
+//			@Override
+//			public void actionPerformed(ActionEvent arg0) {
+//				// TODO Auto-generated method stub
+//				
+//			}
+//		});
 		
-		
-		box.addActionListener(new ActionListener() {
+//		box.addActionListener(new ActionListener() {
+//
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				// TODO Auto-generated method stub
+//
+//			}
+//		});
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-
-			}
-		});
-
+		frame.pack();
+		frame.setVisible(true);
 	}
 
 	public static void main(String[] args) {
 		CalendarGUI c = new CalendarGUI();
-		c.start();
+//		c.start();
+		c.addCalendarFrameContent();
+		
 	}
 }
