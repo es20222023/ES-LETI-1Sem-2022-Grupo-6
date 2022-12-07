@@ -2,17 +2,29 @@ package app;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 public class FileHandler {
+
+	public static final String JSON_FILES_PATH = "files/json_files/";
+	private static final String TEXT_FILES_PATH = "files/text_files/";
+	private static final String LOCATION = "LOCATION:";
+	private static final String DESCRIPTION = "DESCRIPTION:";
+	private static final String UID = "UID:";
+	private static final String SUMMARY = "SUMMARY:";
+	private static final String BEGINEVENT = "BEGIN:VEVENT";
+	private static final String ENDEVENT = "END:VEVENT";
+	private static final String DATESTART = "DTSTART:";
+	private static final String DATEEND = "DTEND:";
 
 	/**
 	 * Funcao que liga as funcoes desta classe, cria arraylist com elementos do
@@ -24,14 +36,14 @@ public class FileHandler {
 	 * @return
 	 */
 
-	public static ArrayList<CalendarEvent> createNewCalendarFile(String schedulePath, String JSONFilePath) {
+	public static ArrayList<CalendarEvent> createNewCalendarFile(String fileName) {
 		try {
-			ArrayList<CalendarEvent> calendarEvents = readTextFile(schedulePath);
+			ArrayList<CalendarEvent> calendarEvents = readTextFile(fileName);
 			JSONArray arr = JSONEncoder(calendarEvents);
-			writeJSONFile(arr, JSONFilePath);
+			writeJSONFile(arr, fileName);
 			return calendarEvents;
 		} catch (FileNotFoundException e) {
-			System.out.println("Erro a tentar ler ficheiro texto do horário");
+			e.printStackTrace();
 			return null;
 		}
 	}
@@ -45,9 +57,9 @@ public class FileHandler {
 	 * @throws FileNotFoundException
 	 */
 
-	private static ArrayList<CalendarEvent> readTextFile(String path) throws FileNotFoundException {
+	private static ArrayList<CalendarEvent> readTextFile(String fileName) throws FileNotFoundException {
 
-		File text = new File(path);
+		File text = new File(TEXT_FILES_PATH + fileName + ".txt");
 		Scanner scanner = new Scanner(text);
 
 		ArrayList<CalendarEvent> calendarEvents = new ArrayList<CalendarEvent>();
@@ -55,15 +67,15 @@ public class FileHandler {
 
 		while (scanner.hasNextLine()) {
 			String line = scanner.nextLine();
-
-			if (line.equals("BEGIN:VEVENT"))
+			if (line.equals(BEGINEVENT))
 				calendarEvent = "";
 
-			else if (line.equals("END:VEVENT"))
-				calendarEvents.add(convertStringToCalendarEvent(calendarEvent));
+			else if (line.equals(ENDEVENT))
+				calendarEvents.add(convertStringToCalendarEvent(calendarEvent, fileName));
 			else
-				calendarEvent += line + "\n";
+				calendarEvent += line;
 		}
+		scanner.close();
 		return calendarEvents;
 	}
 
@@ -74,15 +86,15 @@ public class FileHandler {
 	 * @return
 	 */
 
-	private static CalendarEvent convertStringToCalendarEvent(String event) {
+	private static CalendarEvent convertStringToCalendarEvent(String event, String username) {
 
-		String dateStart = getSubString(event, "DTSTART:", "DTEND:");
-		String dateEnd = getSubString(event, "DTEND:", "SUMMARY:");
-		String summary = getSubString(event, "SUMMARY:", "UID:");
-		String description = getSubString(event, "DESCRIPTION:", "LOCATION:");
-		String location = getSubString(event, "LOCATION:", "");
+		String dateStart = getSubString(event, DATESTART, DATEEND);
+		String dateEnd = getSubString(event, DATEEND, SUMMARY);
+		String summary = getSubString(event, SUMMARY, UID);
+		String description = getSubString(event, DESCRIPTION, LOCATION);
+		String location = getSubString(event, LOCATION, "");
 
-		return (new CalendarEvent(dateStart, dateEnd, summary, description, location));
+		return (new CalendarEvent(dateStart, dateEnd, summary, description, location, username));
 
 	}
 
@@ -108,14 +120,15 @@ public class FileHandler {
 	 * @return
 	 */
 
+	@SuppressWarnings("unchecked")
 	private static JSONArray JSONEncoder(ArrayList<CalendarEvent> calendarEvents) {
 		JSONArray list = new JSONArray();
 
 		for (CalendarEvent event : calendarEvents) {
 			JSONObject obj = new JSONObject();
 
-			obj.put("dateStart", event.getDateStart());
-			obj.put("dateEnd", event.getDateEnd());
+			obj.put("dateStart", event.getDateStart().toString());
+			obj.put("dateEnd", event.getDateEnd().toString());
 			obj.put("summary", event.getSummary());
 			obj.put("description", event.getDescription());
 			obj.put("location", event.getLocation());
@@ -131,11 +144,12 @@ public class FileHandler {
 	 * @param arr
 	 * @param fileName
 	 */
-	
+
 	private static void writeJSONFile(JSONArray arr, String fileName) {
 		try {
 			File dir = new File("files/json_files");
-			File file = new File(dir, fileName);
+			File file = new File(dir, fileName + ".json"); // necessario para que o ficheiro va para o diretorio das
+															// json_files
 			FileWriter fileWriter = new FileWriter(file);
 			fileWriter.write(arr.toJSONString());
 			fileWriter.close();
@@ -143,5 +157,42 @@ public class FileHandler {
 			System.out.println("Erro a escrever JSON file");
 			return;
 		}
+	}
+
+	public static ArrayList<CalendarEvent> decodeJSONFile(String fileName) {
+
+		ArrayList<CalendarEvent> dataToReturn = new ArrayList<CalendarEvent>();
+
+		JSONParser parser = new JSONParser();
+
+		JSONArray a;
+
+		try {
+			a = (JSONArray) parser.parse(new FileReader(JSON_FILES_PATH + fileName));
+		} catch (IOException | ParseException e) {
+			e.printStackTrace();
+			return null;
+		}
+
+		for (Object o : a) {
+			JSONObject calendarEvent = (JSONObject) o;
+			
+			String dateStart = (String) calendarEvent.get("dateStart");
+			String dateEnd = (String) calendarEvent.get("dateEnd");
+			String summary = (String) calendarEvent.get("summary");
+			String description = (String) calendarEvent.get("description");
+			String location = (String) calendarEvent.get("location");
+
+			CalendarEvent event = new CalendarEvent(dateStart, dateEnd, summary, description, location, fileName.replace(".json", ""));
+			dataToReturn.add(event);
+
+		}
+		dataToReturn.sort(null);
+		return dataToReturn;
+	}
+
+	public static void main(String[] args) {
+		createNewCalendarFile("thgas");
+//		decodeJSONFile("thgas.json");
 	}
 }
