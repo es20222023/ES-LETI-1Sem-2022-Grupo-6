@@ -187,7 +187,7 @@ public class CalendarGUI {
 
 		ArrayList<Date> dates = new ArrayList<>();
 		ArrayList<CalendarEvent> events = calendarManager.getEvents();
-		
+
 		datePicker.addActionListener(new ActionListener() {
 
 			@Override
@@ -266,7 +266,7 @@ public class CalendarGUI {
 	}
 
 	private void addEventsToFrame(ArrayList<CalendarEvent> events, int numberOfEvents, int start, int end) {
-		for (int i = start; i < end; i++) {
+		for (int i = start; i < end && events.size() > 0; i++) {
 			if (numberOfEvents <= 0)
 				break;
 			numberOfEvents--;
