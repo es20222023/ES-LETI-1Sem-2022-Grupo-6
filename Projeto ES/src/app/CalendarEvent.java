@@ -15,7 +15,8 @@ public class CalendarEvent implements Comparable<CalendarEvent> {
 	private String location;
 	private String username;
 
-	public CalendarEvent(String dateStart, String dateEnd, String summary, String description, String location, String username) {
+	public CalendarEvent(String dateStart, String dateEnd, String summary, String description, String location,
+			String username) {
 		this.dateStart = parseDate(dateStart);
 		this.dateEnd = parseDate(dateEnd);
 		this.summary = summary;
@@ -83,6 +84,10 @@ public class CalendarEvent implements Comparable<CalendarEvent> {
 		return location;
 	}
 
+	public String getUsername() {
+		return username;
+	}
+
 	public String toString() {
 		String string = "Data de início: " + getDateStart().toString() + "\nData de fim: " + getDateEnd().toString()
 				+ "\nSumario: " + getSummary() + "\nDescricao: " + getDescription() + "\nLocalizacao: " + getLocation();
@@ -102,5 +107,20 @@ public class CalendarEvent implements Comparable<CalendarEvent> {
 	@Override
 	public int compareTo(CalendarEvent c) {
 		return this.dateStart.compareTo(c.dateStart);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CalendarEvent event = (CalendarEvent) obj;
+
+		return username.equals(event.username) && dateStart.equals(event.dateStart) && dateEnd.equals(event.dateEnd)
+				&& summary.equals(event.summary) && description.equals(event.description)
+				&& location.equals(event.location);
 	}
 }
