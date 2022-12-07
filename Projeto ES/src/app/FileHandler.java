@@ -15,7 +15,7 @@ import org.json.simple.parser.ParseException;
 
 public class FileHandler {
 
-	private static final String JSON_FILES_PATH = "files/json_files/";
+	public static final String JSON_FILES_PATH = "files/json_files/";
 	private static final String TEXT_FILES_PATH = "files/text_files/";
 	private static final String LOCATION = "LOCATION:";
 	private static final String DESCRIPTION = "DESCRIPTION:";
@@ -71,7 +71,7 @@ public class FileHandler {
 				calendarEvent = "";
 
 			else if (line.equals(ENDEVENT))
-				calendarEvents.add(convertStringToCalendarEvent(calendarEvent,fileName));
+				calendarEvents.add(convertStringToCalendarEvent(calendarEvent, fileName));
 			else
 				calendarEvent += line;
 		}
@@ -94,7 +94,7 @@ public class FileHandler {
 		String description = getSubString(event, DESCRIPTION, LOCATION);
 		String location = getSubString(event, LOCATION, "");
 
-		return (new CalendarEvent(dateStart, dateEnd, summary, description, location,username));
+		return (new CalendarEvent(dateStart, dateEnd, summary, description, location, username));
 
 	}
 
@@ -148,7 +148,8 @@ public class FileHandler {
 	private static void writeJSONFile(JSONArray arr, String fileName) {
 		try {
 			File dir = new File("files/json_files");
-			File file = new File(dir, fileName +".json"); // necessario para que o ficheiro va para o diretorio das json_files
+			File file = new File(dir, fileName + ".json"); // necessario para que o ficheiro va para o diretorio das
+															// json_files
 			FileWriter fileWriter = new FileWriter(file);
 			fileWriter.write(arr.toJSONString());
 			fileWriter.close();
@@ -167,7 +168,7 @@ public class FileHandler {
 		JSONArray a;
 
 		try {
-			a = (JSONArray) parser.parse(new FileReader(JSON_FILES_PATH + fileName + ".json"));
+			a = (JSONArray) parser.parse(new FileReader(JSON_FILES_PATH + fileName));
 		} catch (IOException | ParseException e) {
 			e.printStackTrace();
 			return null;
@@ -175,14 +176,14 @@ public class FileHandler {
 
 		for (Object o : a) {
 			JSONObject calendarEvent = (JSONObject) o;
-
+			
 			String dateStart = (String) calendarEvent.get("dateStart");
 			String dateEnd = (String) calendarEvent.get("dateEnd");
 			String summary = (String) calendarEvent.get("summary");
 			String description = (String) calendarEvent.get("description");
 			String location = (String) calendarEvent.get("location");
 
-			CalendarEvent event = new CalendarEvent(dateStart, dateEnd, summary, description, location, fileName);
+			CalendarEvent event = new CalendarEvent(dateStart, dateEnd, summary, description, location, fileName.replace(".json", ""));
 			dataToReturn.add(event);
 
 		}
