@@ -21,7 +21,7 @@ public class CalendarManager {
 		File directoryPath = new File(FileHandler.JSON_FILES_PATH);
 		String contents[] = directoryPath.list();
 		for (String path : contents)
-			events.addAll(FileHandler.decodeJSONFile(path));
+			addEvents(FileHandler.decodeJSONFile(path));
 	}
 
 	public void addEvents(ArrayList<CalendarEvent> list) {

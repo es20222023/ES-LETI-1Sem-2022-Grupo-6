@@ -161,7 +161,7 @@ public class CalendarGUI {
 
 		box.setSelectedIndex(1);
 
-		JButton refreshButton = new JButton("Carreguar eventos entre as datas escolhidas");
+		JButton refreshButton = new JButton("Carregar eventos entre as datas escolhidas");
 
 
 		// componentes Header
