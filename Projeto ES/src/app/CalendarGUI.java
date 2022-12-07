@@ -155,9 +155,14 @@ public class CalendarGUI {
 		// componente Combobox
 		String[] numberOfRowsPerPage = { "5", "10", "15", "20" };
 		JComboBox box = new JComboBox<>(numberOfRowsPerPage); // box.getSelectedIndex()
+
+		
+		
+
 		box.setSelectedIndex(1);
 
 		JButton refreshButton = new JButton("Carreguar eventos entre as datas escolhidas");
+
 
 		// componentes Header
 		JLabel dateHeader = new JLabel("Date", SwingConstants.CENTER);
