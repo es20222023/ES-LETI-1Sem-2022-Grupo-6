@@ -96,11 +96,13 @@ public class CalendarEvent implements Comparable<CalendarEvent> {
 
 	public String getDateStartString() {
 		Date date = Date.from(dateStart);
+		date.setHours(date.getHours()+1);
 		return date.toString().replace("WEST", "").replace("WET", "");
 	}
 
 	public String getDateEndString() {
 		Date date = Date.from(dateEnd);
+		date.setHours(date.getHours()+1);
 		return date.toString().replace("WEST", "").replace("WET", "");
 	}
 
