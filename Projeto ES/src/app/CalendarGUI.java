@@ -33,6 +33,7 @@ public class CalendarGUI {
 	private JFrame frame;
 	private CalendarManager calendarManager;
 	private boolean userInputFrameClosed;
+	public static String username;
 
 	public CalendarGUI() {
 		frame = new JFrame();
@@ -82,6 +83,7 @@ public class CalendarGUI {
 			public void actionPerformed(ActionEvent e) {
 				String name = askName.getText();
 				String URL = askURL.getText();
+				username= name;
 
 				userInputFrame.setVisible(false);
 				userInputFrame.dispose();
@@ -174,7 +176,7 @@ public class CalendarGUI {
 		JButton goForward = new JButton(">");
 
 		frame.add(goBack);
-		frame.add(new JLabel("Move in time", SwingConstants.CENTER));
+		frame.add(new JLabel("Move in time - User: " + username, SwingConstants.CENTER));
 		frame.add(goForward);
 		frame.add(datePicker);
 		frame.add(box);
