@@ -107,13 +107,18 @@ public class CalendarEvent implements Comparable<CalendarEvent> {
 	}
 
 	public String getDateStartString() {
-		Date date = Date.from(dateStart);
-		return date.toString().replace("WEST", "").replace("WET", "");
+		return dateInstantToString(dateStart);
 	}
 
 	public String getDateEndString() {
-		Date date = Date.from(dateEnd);
-		return date.toString().replace("WEST", "").replace("WET", "");
+		return dateInstantToString(dateEnd);
+	}
+
+	public static String dateInstantToString(Instant instant) {
+		Date date = Date.from(instant);
+		String str = (date.getYear() + 1900) + "/" + date.getMonth() + "/" + date.getDate() + " " + date.getHours()
+				+ ":" + (date.getMinutes() == 0 ? "00" : date.getMinutes());
+		return str;
 	}
 
 	@Override
