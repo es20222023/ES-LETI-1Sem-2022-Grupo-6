@@ -10,13 +10,13 @@ public class CalendarManager {
 
 	private ArrayList<CalendarEvent> events;
 	private ArrayList<String> users;
-	private static final long SECONDS_IN_AN_HOUR = 3600;
-	private static final long SECONDS_IN_A_DAY = 86400;
-	private static final int MAX_MEETING_DURATION_IN_MINUTES = 270;
-	private static final int SCHEDULE_BLOCK_SIZE_IN_MINUTES = 30;
-	private static final int NUM_MAX_BLOCKS = MAX_MEETING_DURATION_IN_MINUTES / SCHEDULE_BLOCK_SIZE_IN_MINUTES;
-	private static final int MORNING_HOUR_FOR_MEETING_START = 8;
-	private static final int AFTERNOON_HOUR_FOR_MEETING_START = 13;
+	public static final long SECONDS_IN_AN_HOUR = 3600;
+	public static final long SECONDS_IN_A_DAY = 86400;
+	public static final int MAX_MEETING_DURATION_IN_MINUTES = 270;
+	public static final int SCHEDULE_BLOCK_SIZE_IN_MINUTES = 30;
+	public static final int NUM_MAX_BLOCKS = MAX_MEETING_DURATION_IN_MINUTES / SCHEDULE_BLOCK_SIZE_IN_MINUTES;
+	public static final int MORNING_HOUR_FOR_MEETING_START = 8;
+	public static final int AFTERNOON_HOUR_FOR_MEETING_START = 13;
 
 	public CalendarManager() {
 		events = new ArrayList<CalendarEvent>();
@@ -49,8 +49,9 @@ public class CalendarManager {
 		return (ArrayList<CalendarEvent>) events.clone();
 	}
 
-	public ArrayList<String> getUsers() {
-		return users;
+	public String[] getUsers() {
+		String[] str = users.toArray(new String[0]);
+		return str;
 	}
 
 	private boolean isInstantBetweenInstants(Instant instant, Instant start, Instant end) {
@@ -179,7 +180,7 @@ public class CalendarManager {
 		Date tomorrow = Date.from(start.plus(1, ChronoUnit.DAYS));
 
 		if (morning) {
-			Date date = new Date(tomorrow.getYear(), tomorrow.getMonth(), tomorrow.getDay(),
+			Date date = new Date(tomorrow.getYear(), tomorrow.getMonth(), tomorrow.getDate(),
 					MORNING_HOUR_FOR_MEETING_START, 0);
 
 			Instant instant = date.toInstant();
@@ -221,9 +222,7 @@ public class CalendarManager {
 					"A duração da reunião tem que ser um múltiplo de " + SCHEDULE_BLOCK_SIZE_IN_MINUTES);
 
 		Instant now = Instant.now();
-//		Instant now = new Date(2022 - 1900, 11, 4).toInstant();
 
-		ArrayList<CalendarEvent> events = getEventsBetweenDates(now, maxDate);
 		ArrayList<Instant> availableInstants = createInstantsForMeetings(now, maxDate, morning, durationInMinutes,
 				users);
 
@@ -268,6 +267,8 @@ public class CalendarManager {
 				FileHandler.addMeetingToJSONFile(meeting);
 			}
 
+		System.out.println("Meeting scheduled for " + time + (repeating ? " repeating" : ""));
+
 	}
 
 	public static void main(String[] args) {
@@ -277,13 +278,13 @@ public class CalendarManager {
 		String[] users = new String[2];
 		users[0] = "thgas";
 		users[1] = "tamos";
-		
+
 		Instant date = new Date(2024 - 1900, 0, 1).toInstant();
-		
+
 		c.createMeeting(date, null, 30, false, users, "No Discord");
-		
+
 	}
-	
+
 //	public static void main(String[] args) {
 //		CalendarManager c = new CalendarManager();
 //		c.fillWithSavedEvents();
