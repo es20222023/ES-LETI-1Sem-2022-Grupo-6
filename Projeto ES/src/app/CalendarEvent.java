@@ -38,6 +38,8 @@ public class CalendarEvent implements Comparable<CalendarEvent> {
 		SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
 		try {
 			Date dateToReturn = format.parse(date);
+			//mudar para o fuso horario correto
+			dateToReturn.setHours(dateToReturn.getHours()+1);
 			return dateToReturn;
 		} catch (ParseException e) {
 			System.out.println("Erro a dar parse a data");
@@ -96,13 +98,11 @@ public class CalendarEvent implements Comparable<CalendarEvent> {
 
 	public String getDateStartString() {
 		Date date = Date.from(dateStart);
-		date.setHours(date.getHours()+1);
 		return date.toString().replace("WEST", "").replace("WET", "");
 	}
 
 	public String getDateEndString() {
 		Date date = Date.from(dateEnd);
-		date.setHours(date.getHours()+1);
 		return date.toString().replace("WEST", "").replace("WET", "");
 	}
 
