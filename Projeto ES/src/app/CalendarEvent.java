@@ -25,6 +25,16 @@ public class CalendarEvent implements Comparable<CalendarEvent> {
 		this.username = username;
 	}
 
+	public CalendarEvent(Instant dateStart, Instant dateEnd, String summary, String description, String location,
+			String username) {
+		this.dateStart = dateStart;
+		this.dateEnd = dateEnd;
+		this.summary = summary;
+		this.description = description;
+		this.location = location;
+		this.username = username;
+	}
+
 	/**
 	 * Função que dá parse a uma string e retorna um objeto do tipo Date
 	 * 
@@ -38,8 +48,8 @@ public class CalendarEvent implements Comparable<CalendarEvent> {
 		SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
 		try {
 			Date dateToReturn = format.parse(date);
-			//mudar para o fuso horario correto
-			dateToReturn.setHours(dateToReturn.getHours()+1);
+			// mudar para o fuso horario correto
+			dateToReturn.setHours(dateToReturn.getHours() + 1);
 			return dateToReturn;
 		} catch (ParseException e) {
 			System.out.println("Erro a dar parse a data");
