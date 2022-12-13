@@ -242,17 +242,32 @@ public class CalendarManager {
 	}
 
 	private boolean isAvailableWeekly(Instant instant, ArrayList<Instant> availableInstants, Instant maxDate) {
-		for (Instant i = instant; i.isBefore(maxDate.plusSeconds(1)); i = i.plus(7, ChronoUnit.DAYS))
+		for (Instant i = instant; i.isBefore(maxDate); i = i.plus(7, ChronoUnit.DAYS))
 			if (!availableInstants.contains(i))
 				return false;
 
 		return true;
 	}
 
-	public void createMeeting(Instant time, Instant endDate, boolean repeating) {
+	public void createMeeting(Instant time, Instant endDate, int durationInMinutes, boolean repeating, String[] users,
+			String location) {
 
-		
-		
+		Instant dateStart = time;
+		Instant dateEnd = time.plus(durationInMinutes, ChronoUnit.MINUTES);
+
+		if (repeating) {
+			for (Instant i = time; i.isBefore(endDate); i = i.plus(7, ChronoUnit.DAYS)) {
+				for (String user : users) {
+					CalendarEvent meeting = new CalendarEvent(dateStart, dateEnd, "Meeting", "Meeting", location, user);
+					FileHandler.addMeetingToJSONFile(meeting);
+				}
+			}
+		} else
+			for (String user : users) {
+				CalendarEvent meeting = new CalendarEvent(dateStart, dateEnd, "Meeting", "Meeting", location, user);
+				FileHandler.addMeetingToJSONFile(meeting);
+			}
+
 	}
 
 	public static void main(String[] args) {
@@ -262,13 +277,27 @@ public class CalendarManager {
 		String[] users = new String[2];
 		users[0] = "thgas";
 		users[1] = "tamos";
-
-		Instant maxDate = new Date(2022 - 1900, 11, 30).toInstant();
-
-		ArrayList<Instant> i = c.sugestMeeting(users, 30, false, maxDate, true);
-
-		for (Instant ins : i)
-			System.out.println(ins);
-
+		
+		Instant date = new Date(2024 - 1900, 0, 1).toInstant();
+		
+		c.createMeeting(date, null, 30, false, users, "No Discord");
+		
 	}
+	
+//	public static void main(String[] args) {
+//		CalendarManager c = new CalendarManager();
+//		c.fillWithSavedEvents();
+//
+//		String[] users = new String[2];
+//		users[0] = "thgas";
+//		users[1] = "tamos";
+//
+//		Instant maxDate = new Date(2022 - 1900, 11, 30).toInstant();
+//
+//		ArrayList<Instant> i = c.sugestMeeting(users, 30, false, maxDate, true);
+//
+//		for (Instant ins : i)
+//			System.out.println(ins);
+//
+//	}
 }
