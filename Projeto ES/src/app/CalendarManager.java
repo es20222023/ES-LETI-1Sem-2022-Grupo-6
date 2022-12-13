@@ -219,10 +219,10 @@ public class CalendarManager {
 		if (durationInMinutes % SCHEDULE_BLOCK_SIZE_IN_MINUTES != 0)
 			throw new IllegalArgumentException(
 					"A duração da reunião tem que ser um múltiplo de " + SCHEDULE_BLOCK_SIZE_IN_MINUTES);
-		
-//		Instant now = Instant.now();
-		Instant now = new Date(2022 - 1900, 11, 4).toInstant();
-		
+
+		Instant now = Instant.now();
+//		Instant now = new Date(2022 - 1900, 11, 4).toInstant();
+
 		ArrayList<CalendarEvent> events = getEventsBetweenDates(now, maxDate);
 		ArrayList<Instant> availableInstants = createInstantsForMeetings(now, maxDate, morning, durationInMinutes,
 				users);
@@ -249,21 +249,26 @@ public class CalendarManager {
 		return true;
 	}
 
+	public void createMeeting(Instant time, Instant endDate, boolean repeating) {
+
+		
+		
+	}
+
 	public static void main(String[] args) {
 		CalendarManager c = new CalendarManager();
 		c.fillWithSavedEvents();
-		
+
 		String[] users = new String[2];
 		users[0] = "thgas";
 		users[1] = "tamos";
-		
-		Instant maxDate = new Date(2022 - 1900, 11, 30).toInstant();
-		
-		ArrayList<Instant> i = c.sugestMeeting(users, 30, false, maxDate, true);
-		
-		for(Instant ins : i)
-			System.out.println(ins);
-		
-	}
-}	
 
+		Instant maxDate = new Date(2022 - 1900, 11, 30).toInstant();
+
+		ArrayList<Instant> i = c.sugestMeeting(users, 30, false, maxDate, true);
+
+		for (Instant ins : i)
+			System.out.println(ins);
+
+	}
+}
