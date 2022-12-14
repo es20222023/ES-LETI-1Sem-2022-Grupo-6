@@ -14,7 +14,14 @@ import java.net.URL;
 
 public class UrlReader {
 	
-	
+	/**
+	 * Função que vai buscar os dados do calendário que estão em formato
+	 * url e passa esses dados para um ficheiro de texto, guardando na 
+	 * pasta text_files
+	 * @param data -> string que é o proprio url
+	 * @param nome -> nome do usuário (aluno)
+	 * @return -> file em formato txt que contém a infomação
+	 */
 	
 	public static File Urlcatcher(String data, String nome) {
 		

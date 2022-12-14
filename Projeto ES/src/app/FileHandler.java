@@ -125,17 +125,23 @@ public class FileHandler {
 		JSONArray list = new JSONArray();
 
 		for (CalendarEvent event : calendarEvents) {
-			JSONObject obj = new JSONObject();
 
-			obj.put("dateStart", event.getDateStart().toString());
-			obj.put("dateEnd", event.getDateEnd().toString());
-			obj.put("summary", event.getSummary());
-			obj.put("description", event.getDescription());
-			obj.put("location", event.getLocation());
-
-			list.add(obj);
+			list.add(createJSONObject(event));
 		}
 		return list;
+	}
+
+	@SuppressWarnings("unchecked")
+	private static JSONObject createJSONObject(CalendarEvent event) {
+		JSONObject obj = new JSONObject();
+
+		obj.put("dateStart", event.getDateStart().toString());
+		obj.put("dateEnd", event.getDateEnd().toString());
+		obj.put("summary", event.getSummary());
+		obj.put("description", event.getDescription());
+		obj.put("location", event.getLocation());
+
+		return obj;
 	}
 
 	/**
@@ -175,20 +181,46 @@ public class FileHandler {
 		}
 
 		for (Object o : a) {
-			JSONObject calendarEvent = (JSONObject) o;
-			
-			String dateStart = (String) calendarEvent.get("dateStart");
-			String dateEnd = (String) calendarEvent.get("dateEnd");
-			String summary = (String) calendarEvent.get("summary");
-			String description = (String) calendarEvent.get("description");
-			String location = (String) calendarEvent.get("location");
 
-			CalendarEvent event = new CalendarEvent(dateStart, dateEnd, summary, description, location, fileName.replace(".json", ""));
-			dataToReturn.add(event);
+			dataToReturn.add(getCalendarEventFromJSONObject(o, fileName));
 
 		}
 		dataToReturn.sort(null);
 		return dataToReturn;
+	}
+
+	private static CalendarEvent getCalendarEventFromJSONObject(Object o, String fileName) {
+		JSONObject calendarEvent = (JSONObject) o;
+
+		String dateStart = (String) calendarEvent.get("dateStart");
+		String dateEnd = (String) calendarEvent.get("dateEnd");
+		String summary = (String) calendarEvent.get("summary");
+		String description = (String) calendarEvent.get("description");
+		String location = (String) calendarEvent.get("location");
+
+		CalendarEvent event = new CalendarEvent(dateStart, dateEnd, summary, description, location,
+				fileName.replace(".json", ""));
+
+		return event;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static void addMeetingToJSONFile(CalendarEvent meeting) {
+		String fileName = meeting.getUsername();
+		JSONObject obj = createJSONObject(meeting);
+		JSONParser parser = new JSONParser();
+		JSONArray a;
+
+		try {
+			a = (JSONArray) parser.parse(new FileReader(JSON_FILES_PATH + fileName + ".json"));
+			a.add(obj);
+		} catch (IOException | ParseException e) {
+			e.printStackTrace();
+			return;
+		}
+
+		writeJSONFile(a, fileName);
+
 	}
 
 	public static void main(String[] args) {

@@ -3,6 +3,7 @@ package app;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Properties;
 
 import javax.swing.JFormattedTextField.AbstractFormatter;
 
@@ -24,6 +25,14 @@ public class DateLabelFormatter extends AbstractFormatter {
         }
 
         return "";
+    }
+    
+    public static Properties fillProperties() {
+    	Properties p = new Properties();
+		p.put("text.today", "Today");
+		p.put("text.month", "Month");
+		p.put("text.year", "Year");
+		return p;
     }
 
 }
