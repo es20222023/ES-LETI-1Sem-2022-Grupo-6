@@ -80,7 +80,7 @@ public class CalendarEvent implements Comparable<CalendarEvent> {
 		try {
 			Date dateToReturn = format.parse(date);
 			// mudar para o fuso horario correto
-			dateToReturn.setHours(dateToReturn.getHours() + 1);
+			dateToReturn.setHours(dateToReturn.getHours());
 			return dateToReturn;
 		} catch (ParseException e) {
 			System.out.println("Erro a dar parse a data");
