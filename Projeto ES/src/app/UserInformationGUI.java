@@ -18,10 +18,11 @@ public class UserInformationGUI {
 
 	private JFrame frame;
 	private CalendarManager calendarManager;
-	private boolean userInputFrameClosed = false;;
+	private boolean userInputFrameClosed = false;
 
 	public UserInformationGUI(CalendarManager calendarManager) {
 		this.calendarManager = calendarManager;
+		frame = new JFrame("Introduza os seus dados");
 	}
 
 	/**
@@ -31,19 +32,17 @@ public class UserInformationGUI {
 	 */
 	
 	public boolean start() throws InterruptedException {
-		frame = new JFrame("Introduza os seus dados");
-		frame.setSize(500, 300);
-		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		addUserInputFrameContent(frame);
-		frame.pack();
-		frame.setVisible(true);
+		addUserInputFrameContent();
 		while(!userInputFrameClosed)
 			Thread.sleep(100);
 		return true;
 	}
 
-	private void addUserInputFrameContent(JFrame userInputFrame) {
-		userInputFrame.setLayout(new GridLayout(3, 2));
+	private void addUserInputFrameContent() {
+		frame.setSize(500, 300);
+		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		
+		frame.setLayout(new GridLayout(3, 2));
 
 		JLabel askNameLabel = new JLabel("Introduza o seu nome", SwingConstants.CENTER);
 		JTextField askName = new JTextField();
@@ -54,12 +53,12 @@ public class UserInformationGUI {
 		JCheckBox checkBox = new JCheckBox("Individual (x) / Grupo ()");
 		JButton buttonSolo = new JButton("Abrir calendário");
 
-		userInputFrame.add(askNameLabel);
-		userInputFrame.add(askName);
-		userInputFrame.add(askURLLabel);
-		userInputFrame.add(askURL);
-		userInputFrame.add(checkBox);
-		userInputFrame.add(buttonSolo);
+		frame.add(askNameLabel);
+		frame.add(askName);
+		frame.add(askURLLabel);
+		frame.add(askURL);
+		frame.add(checkBox);
+		frame.add(buttonSolo);
 
 		buttonSolo.addActionListener(new ActionListener() {
 			@Override
@@ -67,8 +66,8 @@ public class UserInformationGUI {
 				String name = askName.getText();
 				String URL = askURL.getText();
 
-				userInputFrame.setVisible(false);
-				userInputFrame.dispose();
+				frame.setVisible(false);
+				frame.dispose();
 
 				File txtFileDir = new File("files/text_files/" + name + ".txt");
 				if (!txtFileDir.exists()) {
@@ -83,6 +82,9 @@ public class UserInformationGUI {
 				userInputFrameClosed = true;
 			}
 		});
+		
+		frame.pack();
+		frame.setVisible(true);
 	}
 
 }

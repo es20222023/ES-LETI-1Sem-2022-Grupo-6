@@ -2,13 +2,10 @@ package app;
 
 public class CalendarGUI {
 
-
 	private CalendarManager calendarManager;
-	private boolean userInputFrameClosed;
 
 	public CalendarGUI() {
 		this.calendarManager = new CalendarManager();
-		userInputFrameClosed = false;
 	}
 
 	public void start() throws InterruptedException {

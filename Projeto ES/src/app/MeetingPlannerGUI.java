@@ -35,6 +35,14 @@ public class MeetingPlannerGUI {
 		addFrameContent();
 	}
 
+	private String[] fillMeetingDurationArray() {
+		String[] meetingDurationInMinutes = new String[CalendarManager.MAX_MEETING_DURATION_IN_MINUTES
+				/ CalendarManager.SCHEDULE_BLOCK_SIZE_IN_MINUTES];
+		for (int i = CalendarManager.SCHEDULE_BLOCK_SIZE_IN_MINUTES; i <= CalendarManager.MAX_MEETING_DURATION_IN_MINUTES; i += CalendarManager.SCHEDULE_BLOCK_SIZE_IN_MINUTES)
+			meetingDurationInMinutes[i / CalendarManager.SCHEDULE_BLOCK_SIZE_IN_MINUTES - 1] = i + "";
+		return meetingDurationInMinutes;
+	}
+
 	private void addFrameContent() {
 		frame.setSize(DIMX, DIMY);
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -42,18 +50,12 @@ public class MeetingPlannerGUI {
 
 		// componente datepicker
 		UtilDateModel model = new UtilDateModel();
-		Properties p = new Properties();
-		p.put("text.today", "Today");
-		p.put("text.month", "Month");
-		p.put("text.year", "Year");
+		Properties p = DateLabelFormatter.fillProperties();
 		JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
 		JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());
 
 		// component comboBox duração
-		String[] meetingDurationInMinutes = new String[CalendarManager.MAX_MEETING_DURATION_IN_MINUTES
-				/ CalendarManager.SCHEDULE_BLOCK_SIZE_IN_MINUTES];
-		for (int i = CalendarManager.SCHEDULE_BLOCK_SIZE_IN_MINUTES; i <= CalendarManager.MAX_MEETING_DURATION_IN_MINUTES; i += CalendarManager.SCHEDULE_BLOCK_SIZE_IN_MINUTES)
-			meetingDurationInMinutes[i / CalendarManager.SCHEDULE_BLOCK_SIZE_IN_MINUTES - 1] = i + "";
+		String[] meetingDurationInMinutes = fillMeetingDurationArray();
 		JComboBox<String> boxDuration = new JComboBox<String>(meetingDurationInMinutes);
 		boxDuration.setSelectedIndex(0);
 
@@ -127,6 +129,13 @@ public class MeetingPlannerGUI {
 
 	}
 
+	private String[] getDatesArray(Instant[] instants) {
+		String[] dates = new String[instants.length];
+		for (int i = 0; i < dates.length; i++)
+			dates[i] = CalendarEvent.dateInstantToString(instants[i]);
+		return dates;
+	}
+
 	private void loadNewFrame(ArrayList<Instant> possibleInstants, Instant endDate, int durationInMinutes,
 			boolean repeating, String[] users, String location) {
 
@@ -139,10 +148,7 @@ public class MeetingPlannerGUI {
 
 		Instant[] instants = possibleInstants.toArray(new Instant[0]);
 
-		String[] dates = new String[instants.length];
-		for (int i = 0; i < dates.length; i++) {
-			dates[i] = CalendarEvent.dateInstantToString(instants[i]);
-		}
+		String[] dates = getDatesArray(instants);
 
 		JComboBox<String> instantsBox = new JComboBox<String>(dates);
 

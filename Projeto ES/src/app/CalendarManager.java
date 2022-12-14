@@ -105,6 +105,15 @@ public class CalendarManager {
 		return true;
 	}
 
+	/**
+	 * verifica se todos os users dados estão disponíveis entre os instantes dados
+	 * 
+	 * @param start
+	 * @param end
+	 * @param users
+	 * @return
+	 */
+	
 	public boolean areAllUsersAvailable(Instant start, Instant end, String[] users) {
 		ArrayList<CalendarEvent> events = getEventsBetweenDates(start, end);
 		for (CalendarEvent c : events) {
@@ -271,20 +280,6 @@ public class CalendarManager {
 
 	}
 
-	public static void main(String[] args) {
-		CalendarManager c = new CalendarManager();
-		c.fillWithSavedEvents();
-
-		String[] users = new String[2];
-		users[0] = "thgas";
-		users[1] = "tamos";
-
-		Instant date = new Date(2024 - 1900, 0, 1).toInstant();
-
-		c.createMeeting(date, null, 30, false, users, "No Discord");
-
-	}
-
 //	public static void main(String[] args) {
 //		CalendarManager c = new CalendarManager();
 //		c.fillWithSavedEvents();
@@ -293,12 +288,9 @@ public class CalendarManager {
 //		users[0] = "thgas";
 //		users[1] = "tamos";
 //
-//		Instant maxDate = new Date(2022 - 1900, 11, 30).toInstant();
+//		Instant date = new Date(2024 - 1900, 0, 1).toInstant();
 //
-//		ArrayList<Instant> i = c.sugestMeeting(users, 30, false, maxDate, true);
-//
-//		for (Instant ins : i)
-//			System.out.println(ins);
+//		c.createMeeting(date, null, 30, false, users, "No Discord");
 //
 //	}
 }
