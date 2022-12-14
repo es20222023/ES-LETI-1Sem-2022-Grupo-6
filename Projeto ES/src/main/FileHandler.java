@@ -186,8 +186,8 @@ public class FileHandler {
 	}
 
 	/**
-	 * Função a partir do ficheiro .json dado retorna uma lista com todos os eventos
-	 * presentes nesse array
+	 * Função que a partir do ficheiro .json dado retorna uma lista com todos os eventos
+	 * presentes nesse array JSON
 	 * 
 	 * @param fileName o nome do ficheiro a ser descodificado
 	 * @return uma lista com todos os eventos no ficheiro
@@ -207,7 +207,7 @@ public class FileHandler {
 			e.printStackTrace();
 			return null;
 		}
-
+		
 		for (Object o : a) {
 
 			dataToReturn.add(getCalendarEventFromJSONObject(o, fileName));

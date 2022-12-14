@@ -77,6 +77,21 @@ public class CalendarManager {
 	}
 
 	/**
+	 * Adiciona um evento à <b>ArrayList</b> de eventos
+	 * 
+	 * @param event o evento a adicionar
+	 */
+
+	public void addEvent(CalendarEvent event) {
+		if (!events.contains(event)) {
+			events.add(event);
+			if (!users.contains(event.getUsername()))
+				users.add(event.getUsername());
+			events.sort(null);
+		}
+	}
+
+	/**
 	 * Obtém a lista de eventos
 	 * 
 	 * @return a lista de eventos
@@ -158,7 +173,7 @@ public class CalendarManager {
 	 * @return se o user está disponível nesse período
 	 */
 
-	public boolean isUSerAvailable(String user, Instant start, Instant end) {
+	public boolean isUserAvailable(String user, Instant start, Instant end) {
 		ArrayList<CalendarEvent> events = getEventsBetweenDates(start, end);
 		for (CalendarEvent c : events)
 			if (c.getUsername().equals(user))
@@ -364,18 +379,29 @@ public class CalendarManager {
 
 		if (repeating) {
 			for (Instant i = time; i.isBefore(endDate); i = i.plus(7, ChronoUnit.DAYS)) {
-				for (String user : users) {
-					CalendarEvent meeting = new CalendarEvent(dateStart, dateEnd, "Meeting", "Meeting", location, user);
-					FileHandler.addMeetingToJSONFile(meeting);
-				}
+				addMeetingToAllUsers(i, i.plus(durationInMinutes, ChronoUnit.MINUTES), location, users);
 			}
 		} else
-			for (String user : users) {
-				CalendarEvent meeting = new CalendarEvent(dateStart, dateEnd, "Meeting", "Meeting", location, user);
-				FileHandler.addMeetingToJSONFile(meeting);
-			}
+			addMeetingToAllUsers(dateStart, dateEnd, location, users);
 
 		System.out.println("Meeting scheduled for " + time + (repeating ? " repeating" : ""));
 
+	}
+
+	/**
+	 * Cria uma reunião para todos os users dados
+	 * 
+	 * @param dateStart o início da reunião
+	 * @param dateEnd   o fim da reunião
+	 * @param location  a localização da reunião
+	 * @param users     os utilizadores a participar
+	 */
+
+	private void addMeetingToAllUsers(Instant dateStart, Instant dateEnd, String location, String[] users) {
+		for (String user : users) {
+			CalendarEvent meeting = new CalendarEvent(dateStart, dateEnd, "Meeting", "Meeting", location, user);
+			FileHandler.addMeetingToJSONFile(meeting);
+			addEvent(meeting);
+		}
 	}
 }
