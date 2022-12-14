@@ -55,7 +55,8 @@ public class CalendarManager {
 		File directoryPath = new File(FileHandler.JSON_FILES_PATH);
 		String contents[] = directoryPath.list();
 		for (String path : contents)
-			addEvents(FileHandler.decodeJSONFile(path));
+			if (!path.equals("test"))
+				addEvents(FileHandler.decodeJSONFile(path));
 	}
 
 	/**
