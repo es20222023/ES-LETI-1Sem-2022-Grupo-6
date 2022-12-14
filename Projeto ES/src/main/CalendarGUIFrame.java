@@ -239,7 +239,7 @@ public class CalendarGUIFrame {
 	 */
 
 	private void addEventsToFrame(ArrayList<CalendarEvent> events, int numberOfEvents, int start, int end) {
-		for (int i = start; i < end && events.size() > 0; i++) {
+		for (int i = Math.max(start, 0); i < Math.min(end, events.size()) && events.size() > 0; i++) {
 			if (numberOfEvents <= 0)
 				break;
 			numberOfEvents--;
@@ -269,7 +269,8 @@ public class CalendarGUIFrame {
 				frame.add(new JLabel(""));
 				frame.add(new JLabel(""));
 			}
-		currentIndex = end;
+		currentIndex = Math.min(end, events.size());
+		frame.pack();
 	}
 
 	/**
