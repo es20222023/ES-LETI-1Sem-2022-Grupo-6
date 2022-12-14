@@ -1,4 +1,4 @@
-package tests;
+package test;
 
 import static org.junit.Assert.*;
 
@@ -8,7 +8,7 @@ import java.io.IOException;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
-import app.FileHandler;
+import main.FileHandler;
 
 public class FileHandlerTests {
 
