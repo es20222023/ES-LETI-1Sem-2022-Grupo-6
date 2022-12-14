@@ -1,4 +1,7 @@
-# Projeto-ES
-#Grupo 06
-#Tomás Sousa,    93258
-#Tomás Machado,  93435
+# Projeto de Engenharia de Software
+
+## Grupo 06
+
+### Tomás Sousa, 93258
+
+### Tomás Machado, 93435
