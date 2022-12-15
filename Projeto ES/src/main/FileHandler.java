@@ -1,4 +1,4 @@
-package app;
+package main;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -12,6 +12,12 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+
+/**
+ * 
+ * Classe que lida com todas as escritas/leituras de ficheiros
+ *
+ */
 
 public class FileHandler {
 
@@ -27,13 +33,11 @@ public class FileHandler {
 	private static final String DATEEND = "DTEND:";
 
 	/**
-	 * Funcao que liga as funcoes desta classe, cria arraylist com elementos do
-	 * schedulePath, da encode para JSON dos mesmos e cria a partir deles um
-	 * ficheiro JSON
+	 * Função que que lê o ficheiro .txt com os eventos e os converte para um
+	 * ficheiro .json
 	 * 
-	 * @param schedulePath
-	 * @param JSONFilePath
-	 * @return
+	 * @param fileName o nome do ficheiro de texto
+	 * @return a lista de eventos obtida do ficheiro de texto
 	 */
 
 	public static ArrayList<CalendarEvent> createNewCalendarFile(String fileName) {
@@ -52,8 +56,8 @@ public class FileHandler {
 	 * Funcao que le textfile e retorna uma arraylist em que cada elemento é um dos
 	 * eventos do calendario
 	 * 
-	 * @param path - caminho do ficheiro que se quer ler
-	 * @return calendar
+	 * @param fileName o nome do ficheiro .txt
+	 * @return uma lista com todos os eventos no ficheiro
 	 * @throws FileNotFoundException
 	 */
 
@@ -86,6 +90,14 @@ public class FileHandler {
 	 * @return
 	 */
 
+	/**
+	 * Função que converte a string dada num objeto <b>CalendarEvent</b>
+	 * 
+	 * @param event    String que corresponde a um evento
+	 * @param username o nome do user a quem corresponde o evento
+	 * @return o evento <b>CalendarEvent</b>
+	 */
+
 	private static CalendarEvent convertStringToCalendarEvent(String event, String username) {
 
 		String dateStart = getSubString(event, DATESTART, DATEEND);
@@ -101,10 +113,10 @@ public class FileHandler {
 	/**
 	 * Funcao que retorna a substring entre firstSubString e secondSubString
 	 * 
-	 * @param totalString
-	 * @param firstSubString
-	 * @param secondSubString
-	 * @return
+	 * @param totalString     toda a String a ser considerada
+	 * @param firstSubString  a primeira subString
+	 * @param secondSubString a segunda subString
+	 * @return a string entre as duas string dadas
 	 */
 	private static String getSubString(String totalString, String firstSubString, String secondSubString) {
 		int start = totalString.indexOf(firstSubString) + firstSubString.length();
@@ -114,10 +126,11 @@ public class FileHandler {
 	}
 
 	/**
-	 * Funcao que transforma Objetos CalendarManager em JSON
+	 * Funcao que transforma lista de Objetos <b>CalendarManager</b> em
+	 * <b>JSONArray</b>
 	 * 
-	 * @param calendar
-	 * @return
+	 * @param calendarEvents a lista de eventos
+	 * @return um array JSON
 	 */
 
 	@SuppressWarnings("unchecked")
@@ -130,6 +143,13 @@ public class FileHandler {
 		}
 		return list;
 	}
+
+	/**
+	 * Função que cria um objeto JSON a partir do evento dado
+	 * 
+	 * @param event o evento a considerar
+	 * @return o evento em formato <b>JSONObject</b>
+	 */
 
 	@SuppressWarnings("unchecked")
 	private static JSONObject createJSONObject(CalendarEvent event) {
@@ -145,10 +165,10 @@ public class FileHandler {
 	}
 
 	/**
-	 * Funcao que cria ficheiro JSON a partir do JSONArray dado
+	 * Função que cria ficheiro .json a partir do array JSON dado
 	 * 
-	 * @param arr
-	 * @param fileName
+	 * @param arr      o array JSON a ser considerado
+	 * @param fileName o nome do ficheiro .json a ser criado
 	 */
 
 	private static void writeJSONFile(JSONArray arr, String fileName) {
@@ -165,6 +185,14 @@ public class FileHandler {
 		}
 	}
 
+	/**
+	 * Função que a partir do ficheiro .json dado retorna uma lista com todos os eventos
+	 * presentes nesse array JSON
+	 * 
+	 * @param fileName o nome do ficheiro a ser descodificado
+	 * @return uma lista com todos os eventos no ficheiro
+	 */
+
 	public static ArrayList<CalendarEvent> decodeJSONFile(String fileName) {
 
 		ArrayList<CalendarEvent> dataToReturn = new ArrayList<CalendarEvent>();
@@ -179,7 +207,7 @@ public class FileHandler {
 			e.printStackTrace();
 			return null;
 		}
-
+		
 		for (Object o : a) {
 
 			dataToReturn.add(getCalendarEventFromJSONObject(o, fileName));
@@ -189,7 +217,15 @@ public class FileHandler {
 		return dataToReturn;
 	}
 
-	private static CalendarEvent getCalendarEventFromJSONObject(Object o, String fileName) {
+	/**
+	 * Função que retorna o <b>CalendarEvent</b> a partir do objeto JSON dado
+	 * 
+	 * @param o    o objeto JSON a ser considerado
+	 * @param name o nome do utilizador
+	 * @return o evento presente no objeto dado
+	 */
+
+	private static CalendarEvent getCalendarEventFromJSONObject(Object o, String name) {
 		JSONObject calendarEvent = (JSONObject) o;
 
 		String dateStart = (String) calendarEvent.get("dateStart");
@@ -199,10 +235,17 @@ public class FileHandler {
 		String location = (String) calendarEvent.get("location");
 
 		CalendarEvent event = new CalendarEvent(dateStart, dateEnd, summary, description, location,
-				fileName.replace(".json", ""));
+				name.replace(".json", ""));
 
 		return event;
 	}
+
+	/**
+	 * Função que adiciona a reunião ao ficheiro JSON do user associado a essa
+	 * reunião
+	 * 
+	 * @param meeting o evento associado à reunião
+	 */
 
 	@SuppressWarnings("unchecked")
 	public static void addMeetingToJSONFile(CalendarEvent meeting) {

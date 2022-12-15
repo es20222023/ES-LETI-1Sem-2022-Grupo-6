@@ -1,4 +1,4 @@
-package app;
+package main;
 
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -14,11 +14,24 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 
+/**
+ * 
+ * Classe que lida com a parte da interface gráfica que pede ao utilizador o seu
+ * nome o o seu URL
+ *
+ */
+
 public class UserInformationGUI {
 
 	private JFrame frame;
 	private CalendarManager calendarManager;
 	private boolean userInputFrameClosed = false;
+
+	/**
+	 * Contrutor
+	 * 
+	 * @param calendarManager calendarManager a ser guardado
+	 */
 
 	public UserInformationGUI(CalendarManager calendarManager) {
 		this.calendarManager = calendarManager;
@@ -26,22 +39,30 @@ public class UserInformationGUI {
 	}
 
 	/**
+	 * Função que inicia a GUI
 	 * 
-	 * @return true quando já se tem os inputs necessários
+	 * @return true quando já se tem os inputs necessários, para que a frame da
+	 *         outra classe se possa iniciar
 	 * @throws InterruptedException
 	 */
-	
+
 	public boolean start() throws InterruptedException {
 		addUserInputFrameContent();
-		while(!userInputFrameClosed)
+		while (!userInputFrameClosed)
 			Thread.sleep(100);
 		return true;
 	}
 
+	/**
+	 * 
+	 * Função que adiciona à frame todos os componentes
+	 * 
+	 */
+
 	private void addUserInputFrameContent() {
 		frame.setSize(500, 300);
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		
+
 		frame.setLayout(new GridLayout(3, 2));
 
 		JLabel askNameLabel = new JLabel("Introduza o seu nome", SwingConstants.CENTER);
@@ -82,7 +103,7 @@ public class UserInformationGUI {
 				userInputFrameClosed = true;
 			}
 		});
-		
+
 		frame.pack();
 		frame.setVisible(true);
 	}

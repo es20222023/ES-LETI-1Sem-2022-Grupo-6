@@ -1,4 +1,4 @@
-package app;
+package main;
 
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -21,12 +21,24 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
+/**
+ * 
+ * Classe que trata da Interface gráfica associada à sugestão e escolha de
+ * potenciais reuniões
+ *
+ */
+
 public class MeetingPlannerGUI {
 
 	private JFrame frame;
 	private static final int DIMX = 500;
 	private static final int DIMY = 150;
 	private CalendarManager calendarManager;
+
+	/**
+	 * Contrutor
+	 * 
+	 */
 
 	public MeetingPlannerGUI() {
 		frame = new JFrame("Meeting Planner");
@@ -35,6 +47,13 @@ public class MeetingPlannerGUI {
 		addFrameContent();
 	}
 
+	/**
+	 * Função que retorna um array com as diferentes durantes possíveis de uma
+	 * reunião
+	 * 
+	 * @return um array com as durações possíveis de uma reunião
+	 */
+
 	private String[] fillMeetingDurationArray() {
 		String[] meetingDurationInMinutes = new String[CalendarManager.MAX_MEETING_DURATION_IN_MINUTES
 				/ CalendarManager.SCHEDULE_BLOCK_SIZE_IN_MINUTES];
@@ -42,6 +61,12 @@ public class MeetingPlannerGUI {
 			meetingDurationInMinutes[i / CalendarManager.SCHEDULE_BLOCK_SIZE_IN_MINUTES - 1] = i + "";
 		return meetingDurationInMinutes;
 	}
+
+	/**
+	 * Adiciona o conteúdo à frame, que permite decidir os vários parâmetros da
+	 * reunião
+	 * 
+	 */
 
 	private void addFrameContent() {
 		frame.setSize(DIMX, DIMY);
@@ -129,12 +154,31 @@ public class MeetingPlannerGUI {
 
 	}
 
+	/**
+	 * Retorna uma array com a formatação string das datas
+	 * 
+	 * @param instants instantes a ser transformados em string
+	 * @return as datas formatadas
+	 */
+
 	private String[] getDatesArray(Instant[] instants) {
 		String[] dates = new String[instants.length];
 		for (int i = 0; i < dates.length; i++)
 			dates[i] = CalendarEvent.dateInstantToString(instants[i]);
 		return dates;
 	}
+
+	/**
+	 * Mofica a frame, para ser agora possível escolher o horário da reunião a
+	 * partir dos horários apresentados
+	 * 
+	 * @param possibleInstants  os instantes possíveis de começo da reunião
+	 * @param endDate           a data máxima para a reunião
+	 * @param durationInMinutes a duração da reunião em minutos
+	 * @param repeating         se a reunião é periódica
+	 * @param users             os users a participar na reunião
+	 * @param location          a localização da reunião
+	 */
 
 	private void loadNewFrame(ArrayList<Instant> possibleInstants, Instant endDate, int durationInMinutes,
 			boolean repeating, String[] users, String location) {
