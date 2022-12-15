@@ -1,0 +1,409 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>CalendarManager.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">Projeto ES (15 Dec 2022 00:14:36)</a> &gt; <a href="../../index.html" class="el_group">Projeto ES</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">main</a> &gt; <span class="el_source">CalendarManager.java</span></div><h1>CalendarManager.java</h1><pre class="source lang-java linenums">package main;
+
+import java.io.File;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Date;
+
+/**
+ * 
+ * Classe que guarda os vários eventos de vários utilizadores e gere a interação
+ * entre eles
+ *
+ */
+
+public class CalendarManager {
+
+	private ArrayList&lt;CalendarEvent&gt; events;
+	private ArrayList&lt;String&gt; users;
+
+	/**
+	 * A máxima duração de uma reunião em minutos
+	 */
+	public static final int MAX_MEETING_DURATION_IN_MINUTES = 270;
+	/**
+	 * O tamanho de cada bloco no horário, é assim também o tempo mínimo de uma
+	 * reunião
+	 */
+	public static final int SCHEDULE_BLOCK_SIZE_IN_MINUTES = 30;
+	/**
+	 * A hora em que é considerado o começo da manhã
+	 */
+	public static final int MORNING_HOUR_FOR_MEETING_START = 8;
+	/**
+	 * A hora em que é considerado o começo da tarde
+	 */
+	public static final int AFTERNOON_HOUR_FOR_MEETING_START = 13;
+
+	/**
+	 * Construtor inicializa ambas as &lt;b&gt;ArrayList&lt;/b&gt; de &lt;b&gt;CalendarEvent&lt;/b&gt; e de
+	 * &lt;b&gt;String&lt;/b&gt;
+	 */
+
+<span class="fc" id="L44">	public CalendarManager() {</span>
+<span class="fc" id="L45">		events = new ArrayList&lt;CalendarEvent&gt;();</span>
+<span class="fc" id="L46">		users = new ArrayList&lt;String&gt;();</span>
+<span class="fc" id="L47">	}</span>
+
+	/**
+	 * 
+	 * Preenche events com todos os eventos já existentes na pasta json_files
+	 * 
+	 */
+	public void fillWithSavedEvents() {
+<span class="nc" id="L55">		File directoryPath = new File(FileHandler.JSON_FILES_PATH);</span>
+<span class="nc" id="L56">		String contents[] = directoryPath.list();</span>
+<span class="nc bnc" id="L57" title="All 2 branches missed.">		for (String path : contents)</span>
+<span class="nc bnc" id="L58" title="All 2 branches missed.">			if (!path.equals(&quot;test&quot;))</span>
+<span class="nc" id="L59">				addEvents(FileHandler.decodeJSONFile(path));</span>
+<span class="nc" id="L60">	}</span>
+
+	/**
+	 * Adiciona dados à &lt;b&gt;ArrayList&lt;/b&gt; de eventos
+	 * &lt;p&gt;
+	 * Os eventos dados já existentes na &lt;b&gt;ArrayList&lt;/b&gt; são ignorados
+	 * 
+	 * @param list lista de eventos a adicionar
+	 */
+
+	public void addEvents(ArrayList&lt;CalendarEvent&gt; list) {
+<span class="fc bfc" id="L71" title="All 2 branches covered.">		for (CalendarEvent e : list)</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">			if (!events.contains(e)) {</span>
+<span class="fc" id="L73">				events.add(e);</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">				if (!users.contains(e.getUsername()))</span>
+<span class="fc" id="L75">					users.add(e.getUsername());</span>
+			}
+<span class="fc" id="L77">		events.sort(null);</span>
+<span class="fc" id="L78">	}</span>
+
+	/**
+	 * Adiciona um evento à &lt;b&gt;ArrayList&lt;/b&gt; de eventos
+	 * 
+	 * @param event o evento a adicionar
+	 */
+
+	public void addEvent(CalendarEvent event) {
+<span class="pc bpc" id="L87" title="1 of 2 branches missed.">		if (!events.contains(event)) {</span>
+<span class="fc" id="L88">			events.add(event);</span>
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">			if (!users.contains(event.getUsername()))</span>
+<span class="fc" id="L90">				users.add(event.getUsername());</span>
+<span class="fc" id="L91">			events.sort(null);</span>
+		}
+<span class="fc" id="L93">	}</span>
+
+	/**
+	 * Obtém a lista de eventos
+	 * 
+	 * @return a lista de eventos
+	 */
+
+	public ArrayList&lt;CalendarEvent&gt; getEvents() {
+<span class="fc" id="L102">		return (ArrayList&lt;CalendarEvent&gt;) events.clone();</span>
+	}
+
+	/**
+	 * Obtém a lista de utilizadores
+	 * 
+	 * @return a lista de utilizadores
+	 */
+
+	public String[] getUsers() {
+<span class="nc" id="L112">		String[] str = users.toArray(new String[0]);</span>
+<span class="nc" id="L113">		return str;</span>
+	}
+
+	/**
+	 * Diz se um determinado instante está dentro de um período definido por outros
+	 * dois instantes
+	 * 
+	 * @param instant o instante a considerar
+	 * @param start   o início do período
+	 * @param end     o fim do período
+	 * @return se o instante está contido no perído ou não
+	 */
+
+	private boolean isInstantBetweenInstants(Instant instant, Instant start, Instant end) {
+<span class="fc bfc" id="L127" title="All 4 branches covered.">		return instant.isAfter(start) &amp;&amp; instant.isBefore(end);</span>
+	}
+
+	/**
+	 * Retorna os eventos entre duas datas a partir da lista de eventos
+	 * 
+	 * @param dateStart a data de início
+	 * @param dateEnd   a data de fim
+	 * @return os eventos entre as duas datas
+	 */
+
+	public ArrayList&lt;CalendarEvent&gt; getEventsBetweenDates(Instant dateStart, Instant dateEnd) {
+<span class="pc bpc" id="L139" title="1 of 4 branches missed.">		if (dateEnd == null || dateStart == null)</span>
+<span class="fc" id="L140">			return events;</span>
+<span class="fc" id="L141">		ArrayList&lt;CalendarEvent&gt; eventsToReturn = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L142" title="All 2 branches covered.">		for (CalendarEvent c : events) {</span>
+<span class="fc bfc" id="L143" title="All 4 branches covered.">			if (isInstantBetweenInstants(c.getDateStart(), dateStart, dateEnd) || c.getDateStart().equals(dateStart)</span>
+<span class="pc bpc" id="L144" title="1 of 4 branches missed.">					|| c.getDateEnd().equals(dateEnd) || isInstantBetweenInstants(c.getDateEnd(), dateStart, dateEnd)</span>
+<span class="fc bfc" id="L145" title="All 4 branches covered.">					|| (c.getDateStart().isBefore(dateStart) &amp;&amp; c.getDateEnd().isAfter(dateEnd)))</span>
+<span class="fc" id="L146">				eventsToReturn.add(c);</span>
+		}
+<span class="fc" id="L148">		return eventsToReturn;</span>
+	}
+
+	/**
+	 * Verifica se o user está desponível no dado instante
+	 * 
+	 * @param user    o user a considerar
+	 * @param instant o instante a considerar
+	 * @return se o user está disponível no instante
+	 */
+
+	public boolean isUserAvailable(String user, Instant instant) {
+<span class="fc bfc" id="L160" title="All 2 branches covered.">		for (CalendarEvent c : events)</span>
+<span class="fc bfc" id="L161" title="All 2 branches covered.">			if (c.getUsername().equals(user))</span>
+<span class="fc bfc" id="L162" title="All 2 branches covered.">				if (isInstantBetweenInstants(instant, c.getDateStart(), c.getDateEnd())</span>
+<span class="fc bfc" id="L163" title="All 2 branches covered.">						|| c.getDateStart().equals(instant))</span>
+<span class="fc" id="L164">					return false;</span>
+<span class="fc" id="L165">		return true;</span>
+	}
+
+	/**
+	 * Verifica se o user está disponível entre dois dados instantes
+	 * 
+	 * @param user  o user a considerar
+	 * @param start o início do período
+	 * @param end   o fim do período
+	 * @return se o user está disponível nesse período
+	 */
+
+	public boolean isUserAvailable(String user, Instant start, Instant end) {
+<span class="fc" id="L178">		ArrayList&lt;CalendarEvent&gt; events = getEventsBetweenDates(start, end);</span>
+<span class="fc bfc" id="L179" title="All 2 branches covered.">		for (CalendarEvent c : events)</span>
+<span class="fc bfc" id="L180" title="All 2 branches covered.">			if (c.getUsername().equals(user))</span>
+<span class="fc" id="L181">				return false;</span>
+<span class="fc" id="L182">		return true;</span>
+	}
+
+	/**
+	 * verifica se todos os users dados estão disponíveis entre os instantes dados
+	 * 
+	 * @param start o início do período
+	 * @param end   o fim do período
+	 * @param users os users a considerar
+	 * @return se todos os users estão disponíveis nesse período
+	 */
+
+	public boolean areAllUsersAvailable(Instant start, Instant end, String[] users) {
+<span class="fc" id="L195">		ArrayList&lt;CalendarEvent&gt; events = getEventsBetweenDates(start, end);</span>
+<span class="fc bfc" id="L196" title="All 2 branches covered.">		for (CalendarEvent c : events) {</span>
+<span class="fc bfc" id="L197" title="All 2 branches covered.">			for (String user : users)</span>
+<span class="fc bfc" id="L198" title="All 2 branches covered.">				if (c.getUsername().equals(user))</span>
+<span class="fc" id="L199">					return false;</span>
+		}
+<span class="fc" id="L201">		return true;</span>
+	}
+
+//	/**
+//	 * Devolve users não disponíveis entre os instantes dados
+//	 * 
+//	 * @param start
+//	 * @param end
+//	 * @return
+//	 */
+//
+//	public ArrayList&lt;String&gt; getUnavailableUsers(Instant start, Instant end) {
+//		ArrayList&lt;String&gt; usersToReturn = new ArrayList&lt;String&gt;();
+//		for (String user : users)
+//			if (!isUSerAvailable(user, start, end))
+//				usersToReturn.add(user);
+//		return usersToReturn;
+//	}
+
+//	/**
+//	 * Devolve todos os users não disponíveis no instante dado
+//	 * 
+//	 * @param instant
+//	 * @return
+//	 */
+//
+//	public ArrayList&lt;String&gt; getUnavailableUsers(Instant instant) {
+//		ArrayList&lt;String&gt; usersToReturn = new ArrayList&lt;String&gt;();
+//		for (String user : users)
+//			if (!isUserAvailable(user, instant))
+//				usersToReturn.add(user);
+//		return usersToReturn;
+//	}
+
+	/**
+	 * Devolve uma arraylist com um número de instantes ,de acordo com a duração da
+	 * reunião, em que todos os users dados estão disponíveis
+	 * 
+	 * @param instant           o instante a partir do qual é para começar a
+	 *                          preencher a lista eventuais instantes de reuniões;
+	 *                          este instante deve ser
+	 *                          &lt;b&gt;MORNING_HOUR_FOR_MEETING_START&lt;/b&gt; ou
+	 *                          &lt;b&gt;AFTERNOON_HOUR_FOR_MEETING_START&lt;/b&gt;
+	 * @param durationInMinutes a duração da reunião
+	 * @param users             os users que vão fazer parte da reunião
+	 * @param end               os último instante possível a que uma reunião pode
+	 *                          ser marcada
+	 * @return uma lista com todos os instantes onde é possível marcar uma reunião
+	 */
+
+	private ArrayList&lt;Instant&gt; fillBlocks(Instant instant, int durationInMinutes, String[] users, Instant end) {
+<span class="fc" id="L252">		ArrayList&lt;Instant&gt; instants = new ArrayList&lt;Instant&gt;();</span>
+
+<span class="fc bfc" id="L254" title="All 2 branches covered.">		for (int i = 0; i &lt; MAX_MEETING_DURATION_IN_MINUTES &amp;&amp; instant.plus(i, ChronoUnit.MINUTES)</span>
+<span class="pc bpc" id="L255" title="1 of 2 branches missed.">				.isBefore(end.plusSeconds(1)); i += SCHEDULE_BLOCK_SIZE_IN_MINUTES) {</span>
+
+<span class="fc" id="L257">			Instant newMeetingStartTime = instant.plus(i, ChronoUnit.MINUTES);</span>
+<span class="fc" id="L258">			if (areAllUsersAvailable(newMeetingStartTime,</span>
+<span class="fc bfc" id="L259" title="All 2 branches covered.">					newMeetingStartTime.plus(SCHEDULE_BLOCK_SIZE_IN_MINUTES, ChronoUnit.MINUTES), users)) {</span>
+<span class="fc" id="L260">				instants.add(newMeetingStartTime);</span>
+			}
+		}
+<span class="fc" id="L263">		return instants;</span>
+	}
+
+	/**
+	 * Retorna uma lista com os instantes onde é possível haver uma reunião de
+	 * acordo com os parâmetros fornecidos
+	 * 
+	 * @param start             só é começada a procura de eventuais instantes de
+	 *                          reunião no dia seguinte a este parâmetro
+	 * @param end               a data máxima para a procura de eventuais reuniões
+	 * @param morning           se é para ser uma reunião de manhã ou de tarde
+	 * @param durationInMinutes a duração da reunião em minutos
+	 * @param users             os users que participarão na reunião
+	 * @return uma lista com todos os instantes onde pode haver reunião
+	 */
+
+	private ArrayList&lt;Instant&gt; createInstantsForMeetings(Instant start, Instant end, boolean morning,
+			int durationInMinutes, String users[]) {
+<span class="fc" id="L281">		ArrayList&lt;Instant&gt; instants = new ArrayList&lt;Instant&gt;();</span>
+<span class="fc" id="L282">		Date tomorrow = Date.from(start.plus(1, ChronoUnit.DAYS));</span>
+
+<span class="pc bpc" id="L284" title="1 of 2 branches missed.">		if (morning) {</span>
+<span class="fc" id="L285">			Date date = new Date(tomorrow.getYear(), tomorrow.getMonth(), tomorrow.getDate(),</span>
+<span class="fc" id="L286">					MORNING_HOUR_FOR_MEETING_START, 0);</span>
+
+<span class="fc" id="L288">			Instant instant = date.toInstant();</span>
+
+<span class="fc bfc" id="L290" title="All 2 branches covered.">			while (instant.isBefore(end)) {</span>
+<span class="fc" id="L291">				instants.addAll(fillBlocks(instant, durationInMinutes, users, end));</span>
+<span class="fc" id="L292">				instant = instant.plus(1, ChronoUnit.DAYS);</span>
+			}
+<span class="fc" id="L294">		} else {</span>
+<span class="nc" id="L295">			Date date = new Date(tomorrow.getYear(), tomorrow.getMonth(), tomorrow.getDate(),</span>
+<span class="nc" id="L296">					AFTERNOON_HOUR_FOR_MEETING_START, 0);</span>
+
+<span class="nc" id="L298">			Instant instant = date.toInstant();</span>
+
+<span class="nc bnc" id="L300" title="All 2 branches missed.">			while (instant.isBefore(end)) {</span>
+<span class="nc" id="L301">				instants.addAll(fillBlocks(instant, durationInMinutes, users, end));</span>
+<span class="nc" id="L302">				instant = instant.plus(1, ChronoUnit.DAYS);</span>
+			}
+		}
+
+<span class="fc" id="L306">		return instants;</span>
+	}
+
+	/**
+	 * Sugere as melhores datas para haver uma reunião
+	 * 
+	 * @param users             os utilizadores a participar na reunião
+	 * @param durationInMinutes a duração da reunião em minutos
+	 * @param morning           se é para ser uma reunião de manhã ou de tarde
+	 * @param maxDate           a data máxima para a procura de eventuais reuniões
+	 * @param repeating         se a reunião se repete semanalmente ou não
+	 * @return uma sugestão dos melhores instantes para haver reunião
+	 */
+
+	public ArrayList&lt;Instant&gt; sugestMeeting(String[] users, int durationInMinutes, boolean morning, Instant maxDate,
+			boolean repeating) {
+<span class="pc bpc" id="L322" title="1 of 2 branches missed.">		if (durationInMinutes % SCHEDULE_BLOCK_SIZE_IN_MINUTES != 0)</span>
+<span class="nc" id="L323">			throw new IllegalArgumentException(</span>
+<span class="nc" id="L324">					&quot;A duração da reunião tem que ser um múltiplo de &quot; + SCHEDULE_BLOCK_SIZE_IN_MINUTES);</span>
+
+<span class="fc" id="L326">		Instant now = Instant.now();</span>
+
+<span class="fc" id="L328">		ArrayList&lt;Instant&gt; availableInstants = createInstantsForMeetings(now, maxDate, morning, durationInMinutes,</span>
+<span class="fc" id="L329">				users);</span>
+
+<span class="fc bfc" id="L331" title="All 2 branches covered.">		if (repeating) {</span>
+
+<span class="fc" id="L333">			ArrayList&lt;Instant&gt; repeatingInstants = new ArrayList&lt;Instant&gt;();</span>
+
+<span class="fc bfc" id="L335" title="All 2 branches covered.">			for (Instant i : availableInstants)</span>
+<span class="pc bpc" id="L336" title="1 of 2 branches missed.">				if (isAvailableWeekly(i, availableInstants, maxDate))</span>
+<span class="fc" id="L337">					repeatingInstants.add(i);</span>
+
+<span class="fc" id="L339">			return repeatingInstants;</span>
+		}
+
+<span class="fc" id="L342">		return availableInstants;</span>
+	}
+
+	/**
+	 * Indica se o dado instante existe na lista dada de 7 em 7 dias até à dada data
+	 * máxima
+	 * 
+	 * @param instant           o instante a considerar
+	 * @param availableInstants a lista de instantes possíveis
+	 * @param maxDate           a data máxima a ser considerada
+	 * @return se o dado instante é apto para ser uma reunião semanal
+	 */
+
+	private boolean isAvailableWeekly(Instant instant, ArrayList&lt;Instant&gt; availableInstants, Instant maxDate) {
+<span class="fc bfc" id="L356" title="All 2 branches covered.">		for (Instant i = instant; i.isBefore(maxDate); i = i.plus(7, ChronoUnit.DAYS))</span>
+<span class="pc bpc" id="L357" title="1 of 2 branches missed.">			if (!availableInstants.contains(i))</span>
+<span class="nc" id="L358">				return false;</span>
+
+<span class="fc" id="L360">		return true;</span>
+	}
+
+	/**
+	 * Cria uma reunião no ficheiro que guarda as reuniões para cada user
+	 * 
+	 * @param time              o início da reunião
+	 * @param endDate           a data máxima da reunião, apenas a ser considerada
+	 *                          no caso de ser uma reunião periódica
+	 * @param durationInMinutes a duração da reunião em minutos
+	 * @param repeating         se é uma reunião periódica
+	 * @param users             os users a fazer parte da reunião
+	 * @param location          a localização da reunião
+	 */
+
+	public void createMeeting(Instant time, Instant endDate, int durationInMinutes, boolean repeating, String[] users,
+			String location) {
+
+<span class="fc" id="L378">		Instant dateStart = time;</span>
+<span class="fc" id="L379">		Instant dateEnd = time.plus(durationInMinutes, ChronoUnit.MINUTES);</span>
+
+<span class="pc bpc" id="L381" title="1 of 2 branches missed.">		if (repeating) {</span>
+<span class="nc bnc" id="L382" title="All 2 branches missed.">			for (Instant i = time; i.isBefore(endDate); i = i.plus(7, ChronoUnit.DAYS)) {</span>
+<span class="nc" id="L383">				addMeetingToAllUsers(i, i.plus(durationInMinutes, ChronoUnit.MINUTES), location, users);</span>
+			}
+<span class="nc" id="L385">		} else</span>
+<span class="fc" id="L386">			addMeetingToAllUsers(dateStart, dateEnd, location, users);</span>
+
+<span class="pc bpc" id="L388" title="1 of 2 branches missed.">		System.out.println(&quot;Meeting scheduled for &quot; + time + (repeating ? &quot; repeating&quot; : &quot;&quot;));</span>
+
+<span class="fc" id="L390">	}</span>
+
+	/**
+	 * Cria uma reunião para todos os users dados
+	 * 
+	 * @param dateStart o início da reunião
+	 * @param dateEnd   o fim da reunião
+	 * @param location  a localização da reunião
+	 * @param users     os utilizadores a participar
+	 */
+
+	private void addMeetingToAllUsers(Instant dateStart, Instant dateEnd, String location, String[] users) {
+<span class="fc bfc" id="L402" title="All 2 branches covered.">		for (String user : users) {</span>
+<span class="fc" id="L403">			CalendarEvent meeting = new CalendarEvent(dateStart, dateEnd, &quot;Meeting&quot;, &quot;Meeting&quot;, location, user);</span>
+<span class="fc" id="L404">			FileHandler.addMeetingToJSONFile(meeting);</span>
+<span class="fc" id="L405">			addEvent(meeting);</span>
+		}
+<span class="fc" id="L407">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span>Projeto ES (15 Dec 2022 00:14:36)</div></body></html>

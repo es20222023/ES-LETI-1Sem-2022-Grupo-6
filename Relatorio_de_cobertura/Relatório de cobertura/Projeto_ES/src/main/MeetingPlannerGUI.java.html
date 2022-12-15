@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>MeetingPlannerGUI.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">Projeto ES (15 Dec 2022 00:14:36)</a> &gt; <a href="../../index.html" class="el_group">Projeto ES</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">main</a> &gt; <span class="el_source">MeetingPlannerGUI.java</span></div><h1>MeetingPlannerGUI.java</h1><pre class="source lang-java linenums">package main;
+
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Properties;
+
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.WindowConstants;
+
+import org.jdatepicker.impl.JDatePanelImpl;
+import org.jdatepicker.impl.JDatePickerImpl;
+import org.jdatepicker.impl.UtilDateModel;
+
+/**
+ * 
+ * Classe que trata da Interface gráfica associada à sugestão e escolha de
+ * potenciais reuniões
+ *
+ */
+
+public class MeetingPlannerGUI {
+
+	private JFrame frame;
+	private static final int DIMX = 500;
+	private static final int DIMY = 150;
+	private CalendarManager calendarManager;
+
+	/**
+	 * Contrutor
+	 * 
+	 */
+
+<span class="nc" id="L43">	public MeetingPlannerGUI() {</span>
+<span class="nc" id="L44">		frame = new JFrame(&quot;Meeting Planner&quot;);</span>
+<span class="nc" id="L45">		calendarManager = new CalendarManager();</span>
+<span class="nc" id="L46">		calendarManager.fillWithSavedEvents();</span>
+<span class="nc" id="L47">		addFrameContent();</span>
+<span class="nc" id="L48">	}</span>
+
+	/**
+	 * Função que retorna um array com as diferentes durantes possíveis de uma
+	 * reunião
+	 * 
+	 * @return um array com as durações possíveis de uma reunião
+	 */
+
+	private String[] fillMeetingDurationArray() {
+<span class="nc" id="L58">		String[] meetingDurationInMinutes = new String[CalendarManager.MAX_MEETING_DURATION_IN_MINUTES</span>
+				/ CalendarManager.SCHEDULE_BLOCK_SIZE_IN_MINUTES];
+<span class="nc bnc" id="L60" title="All 2 branches missed.">		for (int i = CalendarManager.SCHEDULE_BLOCK_SIZE_IN_MINUTES; i &lt;= CalendarManager.MAX_MEETING_DURATION_IN_MINUTES; i += CalendarManager.SCHEDULE_BLOCK_SIZE_IN_MINUTES)</span>
+<span class="nc" id="L61">			meetingDurationInMinutes[i / CalendarManager.SCHEDULE_BLOCK_SIZE_IN_MINUTES - 1] = i + &quot;&quot;;</span>
+<span class="nc" id="L62">		return meetingDurationInMinutes;</span>
+	}
+
+	/**
+	 * Adiciona o conteúdo à frame, que permite decidir os vários parâmetros da
+	 * reunião
+	 * 
+	 */
+
+	private void addFrameContent() {
+<span class="nc" id="L72">		frame.setSize(DIMX, DIMY);</span>
+<span class="nc" id="L73">		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);</span>
+<span class="nc" id="L74">		frame.setLayout(new GridLayout(7, 2));</span>
+
+		// componente datepicker
+<span class="nc" id="L77">		UtilDateModel model = new UtilDateModel();</span>
+<span class="nc" id="L78">		Properties p = DateLabelFormatter.fillProperties();</span>
+<span class="nc" id="L79">		JDatePanelImpl datePanel = new JDatePanelImpl(model, p);</span>
+<span class="nc" id="L80">		JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());</span>
+
+		// component comboBox duração
+<span class="nc" id="L83">		String[] meetingDurationInMinutes = fillMeetingDurationArray();</span>
+<span class="nc" id="L84">		JComboBox&lt;String&gt; boxDuration = new JComboBox&lt;String&gt;(meetingDurationInMinutes);</span>
+<span class="nc" id="L85">		boxDuration.setSelectedIndex(0);</span>
+
+		// component comboBox users
+<span class="nc" id="L88">		String[] users = calendarManager.getUsers();</span>
+<span class="nc" id="L89">		ArrayList&lt;String&gt; selectedUsers = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L90">		JComboBox&lt;String&gt; boxUsers = new JComboBox&lt;String&gt;(users);</span>
+<span class="nc" id="L91">		boxUsers.setSelectedIndex(0);</span>
+<span class="nc" id="L92">		boxUsers.addActionListener(new ActionListener() {</span>
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L96">				selectedUsers.add(users[boxUsers.getSelectedIndex()]);</span>
+<span class="nc" id="L97">			}</span>
+		});
+
+		// componentes checkbox
+<span class="nc" id="L101">		JCheckBox checkBoxMorning = new JCheckBox(&quot;Reunião de manhã&quot;);</span>
+<span class="nc" id="L102">		JCheckBox checkBoxRepeating = new JCheckBox(&quot;Reunião periódica&quot;);</span>
+
+		// componente textfield
+<span class="nc" id="L105">		JTextField location = new JTextField();</span>
+
+		// component button
+<span class="nc" id="L108">		JButton loadButton = new JButton(&quot;Carregar horários possíveis das reuniões&quot;);</span>
+<span class="nc" id="L109">		loadButton.addActionListener(new ActionListener() {</span>
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L113">				Date date = (Date) datePicker.getModel().getValue();</span>
+<span class="nc" id="L114">				int duration = Integer.parseInt(meetingDurationInMinutes[boxDuration.getSelectedIndex()]);</span>
+<span class="nc" id="L115">				boolean morning = checkBoxMorning.isSelected();</span>
+<span class="nc" id="L116">				boolean repeating = checkBoxRepeating.isSelected();</span>
+<span class="nc" id="L117">				String[] users = selectedUsers.toArray(new String[0]);</span>
+
+<span class="nc" id="L119">				ArrayList&lt;Instant&gt; possibleInstants = calendarManager.sugestMeeting(users, duration, morning,</span>
+<span class="nc" id="L120">						date.toInstant(), repeating);</span>
+
+<span class="nc" id="L122">				loadNewFrame(possibleInstants, date.toInstant(), duration, repeating, users, location.getText());</span>
+
+<span class="nc" id="L124">			}</span>
+		});
+
+		// componentes label
+<span class="nc" id="L128">		JLabel chooseDate = new JLabel(&quot;Escolha uma data máxima para a reunião&quot;, SwingConstants.CENTER);</span>
+<span class="nc" id="L129">		JLabel chooseMeetingDuration = new JLabel(&quot;Escolha a duração da reunião, em minutos&quot;, SwingConstants.CENTER);</span>
+<span class="nc" id="L130">		JLabel chooseUsers = new JLabel(&quot;Escolha os users que participarão na reunião&quot;, SwingConstants.CENTER);</span>
+<span class="nc" id="L131">		JLabel chooseMorning = new JLabel(&quot;(X) Reunião de manhã / () Reunião à tarde&quot;, SwingConstants.CENTER);</span>
+<span class="nc" id="L132">		JLabel chooseRepeating = new JLabel(&quot;(X) Reunião periódica / () Reunião única&quot;, SwingConstants.CENTER);</span>
+<span class="nc" id="L133">		JLabel chooseLocation = new JLabel(&quot;Insira a localização&quot;, SwingConstants.CENTER);</span>
+<span class="nc" id="L134">		JLabel load = new JLabel(&quot;Carregue no botão para carregar os instantes possíveis&quot;, SwingConstants.CENTER);</span>
+
+		// adcionar componentes à frame
+<span class="nc" id="L137">		frame.add(chooseDate);</span>
+<span class="nc" id="L138">		frame.add(datePicker);</span>
+<span class="nc" id="L139">		frame.add(chooseMeetingDuration);</span>
+<span class="nc" id="L140">		frame.add(boxDuration);</span>
+<span class="nc" id="L141">		frame.add(chooseUsers);</span>
+<span class="nc" id="L142">		frame.add(boxUsers);</span>
+<span class="nc" id="L143">		frame.add(chooseLocation);</span>
+<span class="nc" id="L144">		frame.add(location);</span>
+<span class="nc" id="L145">		frame.add(chooseMorning);</span>
+<span class="nc" id="L146">		frame.add(checkBoxMorning);</span>
+<span class="nc" id="L147">		frame.add(chooseRepeating);</span>
+<span class="nc" id="L148">		frame.add(checkBoxRepeating);</span>
+<span class="nc" id="L149">		frame.add(load);</span>
+<span class="nc" id="L150">		frame.add(loadButton);</span>
+
+<span class="nc" id="L152">		frame.pack();</span>
+<span class="nc" id="L153">		frame.setVisible(true);</span>
+
+<span class="nc" id="L155">	}</span>
+
+	/**
+	 * Retorna uma array com a formatação string das datas
+	 * 
+	 * @param instants instantes a ser transformados em string
+	 * @return as datas formatadas
+	 */
+
+	private String[] getDatesArray(Instant[] instants) {
+<span class="nc" id="L165">		String[] dates = new String[instants.length];</span>
+<span class="nc bnc" id="L166" title="All 2 branches missed.">		for (int i = 0; i &lt; dates.length; i++)</span>
+<span class="nc" id="L167">			dates[i] = CalendarEvent.dateInstantToString(instants[i]);</span>
+<span class="nc" id="L168">		return dates;</span>
+	}
+
+	/**
+	 * Mofica a frame, para ser agora possível escolher o horário da reunião a
+	 * partir dos horários apresentados
+	 * 
+	 * @param possibleInstants  os instantes possíveis de começo da reunião
+	 * @param endDate           a data máxima para a reunião
+	 * @param durationInMinutes a duração da reunião em minutos
+	 * @param repeating         se a reunião é periódica
+	 * @param users             os users a participar na reunião
+	 * @param location          a localização da reunião
+	 */
+
+	private void loadNewFrame(ArrayList&lt;Instant&gt; possibleInstants, Instant endDate, int durationInMinutes,
+			boolean repeating, String[] users, String location) {
+
+<span class="nc" id="L186">		JFrame newFrame = new JFrame();</span>
+<span class="nc" id="L187">		newFrame.setSize(DIMX, DIMY);</span>
+<span class="nc" id="L188">		newFrame.setLayout(new GridLayout(2, 2));</span>
+
+<span class="nc" id="L190">		JLabel instantLabel = new JLabel(&quot;Escolha um dos horários para a reunião&quot;, SwingConstants.CENTER);</span>
+<span class="nc" id="L191">		JLabel buttonLabel = new JLabel(&quot;Carregue no botão para criar a reunião&quot;, SwingConstants.CENTER);</span>
+
+<span class="nc" id="L193">		Instant[] instants = possibleInstants.toArray(new Instant[0]);</span>
+
+<span class="nc" id="L195">		String[] dates = getDatesArray(instants);</span>
+
+<span class="nc" id="L197">		JComboBox&lt;String&gt; instantsBox = new JComboBox&lt;String&gt;(dates);</span>
+
+<span class="nc" id="L199">		JButton button = new JButton(&quot;Criar reunião&quot;);</span>
+<span class="nc" id="L200">		button.addActionListener(new ActionListener() {</span>
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L204">				calendarManager.createMeeting(instants[instantsBox.getSelectedIndex()], endDate, durationInMinutes,</span>
+<span class="nc" id="L205">						repeating, users, location);</span>
+<span class="nc" id="L206">			}</span>
+		});
+
+<span class="nc" id="L209">		newFrame.add(instantLabel);</span>
+<span class="nc" id="L210">		newFrame.add(instantsBox);</span>
+<span class="nc" id="L211">		newFrame.add(buttonLabel);</span>
+<span class="nc" id="L212">		newFrame.add(button);</span>
+
+<span class="nc" id="L214">		newFrame.pack();</span>
+<span class="nc" id="L215">		newFrame.setVisible(true);</span>
+<span class="nc" id="L216">	}</span>
+
+	public static void main(String[] args) {
+<span class="nc" id="L219">		MeetingPlannerGUI m = new MeetingPlannerGUI();</span>
+<span class="nc" id="L220">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span>Projeto ES (15 Dec 2022 00:14:36)</div></body></html>

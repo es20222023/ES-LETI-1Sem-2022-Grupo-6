@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>FileHandler.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">Projeto ES (15 Dec 2022 00:14:36)</a> &gt; <a href="../../index.html" class="el_group">Projeto ES</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">main</a> &gt; <span class="el_source">FileHandler.java</span></div><h1>FileHandler.java</h1><pre class="source lang-java linenums">package main;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+/**
+ * 
+ * Classe que lida com todas as escritas/leituras de ficheiros
+ *
+ */
+
+<span class="nc" id="L22">public class FileHandler {</span>
+
+	public static final String JSON_FILES_PATH = &quot;files/json_files/&quot;;
+	private static final String TEXT_FILES_PATH = &quot;files/text_files/&quot;;
+	private static final String LOCATION = &quot;LOCATION:&quot;;
+	private static final String DESCRIPTION = &quot;DESCRIPTION:&quot;;
+	private static final String UID = &quot;UID:&quot;;
+	private static final String SUMMARY = &quot;SUMMARY:&quot;;
+	private static final String BEGINEVENT = &quot;BEGIN:VEVENT&quot;;
+	private static final String ENDEVENT = &quot;END:VEVENT&quot;;
+	private static final String DATESTART = &quot;DTSTART:&quot;;
+	private static final String DATEEND = &quot;DTEND:&quot;;
+
+	/**
+	 * Função que que lê o ficheiro .txt com os eventos e os converte para um
+	 * ficheiro .json
+	 * 
+	 * @param fileName o nome do ficheiro de texto
+	 * @return a lista de eventos obtida do ficheiro de texto
+	 */
+
+	public static ArrayList&lt;CalendarEvent&gt; createNewCalendarFile(String fileName) {
+		try {
+<span class="fc" id="L45">			ArrayList&lt;CalendarEvent&gt; calendarEvents = readTextFile(fileName);</span>
+<span class="fc" id="L46">			JSONArray arr = JSONEncoder(calendarEvents);</span>
+<span class="fc" id="L47">			writeJSONFile(arr, fileName);</span>
+<span class="fc" id="L48">			return calendarEvents;</span>
+<span class="nc" id="L49">		} catch (FileNotFoundException e) {</span>
+<span class="nc" id="L50">			e.printStackTrace();</span>
+<span class="nc" id="L51">			return null;</span>
+		}
+	}
+
+	/**
+	 * Funcao que le textfile e retorna uma arraylist em que cada elemento é um dos
+	 * eventos do calendario
+	 * 
+	 * @param fileName o nome do ficheiro .txt
+	 * @return uma lista com todos os eventos no ficheiro
+	 * @throws FileNotFoundException
+	 */
+
+	private static ArrayList&lt;CalendarEvent&gt; readTextFile(String fileName) throws FileNotFoundException {
+
+<span class="fc" id="L66">		File text = new File(TEXT_FILES_PATH + fileName + &quot;.txt&quot;);</span>
+<span class="fc" id="L67">		Scanner scanner = new Scanner(text);</span>
+
+<span class="fc" id="L69">		ArrayList&lt;CalendarEvent&gt; calendarEvents = new ArrayList&lt;CalendarEvent&gt;();</span>
+<span class="fc" id="L70">		String calendarEvent = &quot;&quot;;</span>
+
+<span class="fc bfc" id="L72" title="All 2 branches covered.">		while (scanner.hasNextLine()) {</span>
+<span class="fc" id="L73">			String line = scanner.nextLine();</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">			if (line.equals(BEGINEVENT))</span>
+<span class="fc" id="L75">				calendarEvent = &quot;&quot;;</span>
+
+<span class="fc bfc" id="L77" title="All 2 branches covered.">			else if (line.equals(ENDEVENT))</span>
+<span class="fc" id="L78">				calendarEvents.add(convertStringToCalendarEvent(calendarEvent, fileName));</span>
+			else
+<span class="fc" id="L80">				calendarEvent += line;</span>
+		}
+<span class="fc" id="L82">		scanner.close();</span>
+<span class="fc" id="L83">		return calendarEvents;</span>
+	}
+
+	/**
+	 * Função que converte a String com os dados respetivos em CalendarEvent
+	 * 
+	 * @param event
+	 * @return
+	 */
+
+	/**
+	 * Função que converte a string dada num objeto &lt;b&gt;CalendarEvent&lt;/b&gt;
+	 * 
+	 * @param event    String que corresponde a um evento
+	 * @param username o nome do user a quem corresponde o evento
+	 * @return o evento &lt;b&gt;CalendarEvent&lt;/b&gt;
+	 */
+
+	private static CalendarEvent convertStringToCalendarEvent(String event, String username) {
+
+<span class="fc" id="L103">		String dateStart = getSubString(event, DATESTART, DATEEND);</span>
+<span class="fc" id="L104">		String dateEnd = getSubString(event, DATEEND, SUMMARY);</span>
+<span class="fc" id="L105">		String summary = getSubString(event, SUMMARY, UID);</span>
+<span class="fc" id="L106">		String description = getSubString(event, DESCRIPTION, LOCATION);</span>
+<span class="fc" id="L107">		String location = getSubString(event, LOCATION, &quot;&quot;);</span>
+
+<span class="fc" id="L109">		return (new CalendarEvent(dateStart, dateEnd, summary, description, location, username));</span>
+
+	}
+
+	/**
+	 * Funcao que retorna a substring entre firstSubString e secondSubString
+	 * 
+	 * @param totalString     toda a String a ser considerada
+	 * @param firstSubString  a primeira subString
+	 * @param secondSubString a segunda subString
+	 * @return a string entre as duas string dadas
+	 */
+	private static String getSubString(String totalString, String firstSubString, String secondSubString) {
+<span class="fc" id="L122">		int start = totalString.indexOf(firstSubString) + firstSubString.length();</span>
+<span class="fc" id="L123">		int end = totalString.lastIndexOf(secondSubString);</span>
+
+<span class="fc" id="L125">		return totalString.substring(start, end);</span>
+	}
+
+	/**
+	 * Funcao que transforma lista de Objetos &lt;b&gt;CalendarManager&lt;/b&gt; em
+	 * &lt;b&gt;JSONArray&lt;/b&gt;
+	 * 
+	 * @param calendarEvents a lista de eventos
+	 * @return um array JSON
+	 */
+
+	@SuppressWarnings(&quot;unchecked&quot;)
+	private static JSONArray JSONEncoder(ArrayList&lt;CalendarEvent&gt; calendarEvents) {
+<span class="fc" id="L138">		JSONArray list = new JSONArray();</span>
+
+<span class="fc bfc" id="L140" title="All 2 branches covered.">		for (CalendarEvent event : calendarEvents) {</span>
+
+<span class="fc" id="L142">			list.add(createJSONObject(event));</span>
+		}
+<span class="fc" id="L144">		return list;</span>
+	}
+
+	/**
+	 * Função que cria um objeto JSON a partir do evento dado
+	 * 
+	 * @param event o evento a considerar
+	 * @return o evento em formato &lt;b&gt;JSONObject&lt;/b&gt;
+	 */
+
+	@SuppressWarnings(&quot;unchecked&quot;)
+	private static JSONObject createJSONObject(CalendarEvent event) {
+<span class="fc" id="L156">		JSONObject obj = new JSONObject();</span>
+
+<span class="fc" id="L158">		obj.put(&quot;dateStart&quot;, event.getDateStart().toString());</span>
+<span class="fc" id="L159">		obj.put(&quot;dateEnd&quot;, event.getDateEnd().toString());</span>
+<span class="fc" id="L160">		obj.put(&quot;summary&quot;, event.getSummary());</span>
+<span class="fc" id="L161">		obj.put(&quot;description&quot;, event.getDescription());</span>
+<span class="fc" id="L162">		obj.put(&quot;location&quot;, event.getLocation());</span>
+
+<span class="fc" id="L164">		return obj;</span>
+	}
+
+	/**
+	 * Função que cria ficheiro .json a partir do array JSON dado
+	 * 
+	 * @param arr      o array JSON a ser considerado
+	 * @param fileName o nome do ficheiro .json a ser criado
+	 */
+
+	private static void writeJSONFile(JSONArray arr, String fileName) {
+		try {
+<span class="fc" id="L176">			File dir = new File(&quot;files/json_files&quot;);</span>
+<span class="fc" id="L177">			File file = new File(dir, fileName + &quot;.json&quot;); // necessario para que o ficheiro va para o diretorio das</span>
+															// json_files
+<span class="fc" id="L179">			FileWriter fileWriter = new FileWriter(file);</span>
+<span class="fc" id="L180">			fileWriter.write(arr.toJSONString());</span>
+<span class="fc" id="L181">			fileWriter.close();</span>
+<span class="pc" id="L182">		} catch (IOException e) {</span>
+<span class="nc" id="L183">			System.out.println(&quot;Erro a escrever JSON file&quot;);</span>
+<span class="nc" id="L184">			return;</span>
+		}
+<span class="fc" id="L186">	}</span>
+
+	/**
+	 * Função que a partir do ficheiro .json dado retorna uma lista com todos os eventos
+	 * presentes nesse array JSON
+	 * 
+	 * @param fileName o nome do ficheiro a ser descodificado
+	 * @return uma lista com todos os eventos no ficheiro
+	 */
+
+	public static ArrayList&lt;CalendarEvent&gt; decodeJSONFile(String fileName) {
+
+<span class="fc" id="L198">		ArrayList&lt;CalendarEvent&gt; dataToReturn = new ArrayList&lt;CalendarEvent&gt;();</span>
+
+<span class="fc" id="L200">		JSONParser parser = new JSONParser();</span>
+
+		JSONArray a;
+
+		try {
+<span class="fc" id="L205">			a = (JSONArray) parser.parse(new FileReader(JSON_FILES_PATH + fileName));</span>
+<span class="pc" id="L206">		} catch (IOException | ParseException e) {</span>
+<span class="nc" id="L207">			e.printStackTrace();</span>
+<span class="nc" id="L208">			return null;</span>
+		}
+		
+<span class="fc bfc" id="L211" title="All 2 branches covered.">		for (Object o : a) {</span>
+
+<span class="fc" id="L213">			dataToReturn.add(getCalendarEventFromJSONObject(o, fileName));</span>
+
+		}
+<span class="fc" id="L216">		dataToReturn.sort(null);</span>
+<span class="fc" id="L217">		return dataToReturn;</span>
+	}
+
+	/**
+	 * Função que retorna o &lt;b&gt;CalendarEvent&lt;/b&gt; a partir do objeto JSON dado
+	 * 
+	 * @param o    o objeto JSON a ser considerado
+	 * @param name o nome do utilizador
+	 * @return o evento presente no objeto dado
+	 */
+
+	private static CalendarEvent getCalendarEventFromJSONObject(Object o, String name) {
+<span class="fc" id="L229">		JSONObject calendarEvent = (JSONObject) o;</span>
+
+<span class="fc" id="L231">		String dateStart = (String) calendarEvent.get(&quot;dateStart&quot;);</span>
+<span class="fc" id="L232">		String dateEnd = (String) calendarEvent.get(&quot;dateEnd&quot;);</span>
+<span class="fc" id="L233">		String summary = (String) calendarEvent.get(&quot;summary&quot;);</span>
+<span class="fc" id="L234">		String description = (String) calendarEvent.get(&quot;description&quot;);</span>
+<span class="fc" id="L235">		String location = (String) calendarEvent.get(&quot;location&quot;);</span>
+
+<span class="fc" id="L237">		CalendarEvent event = new CalendarEvent(dateStart, dateEnd, summary, description, location,</span>
+<span class="fc" id="L238">				name.replace(&quot;.json&quot;, &quot;&quot;));</span>
+
+<span class="fc" id="L240">		return event;</span>
+	}
+
+	/**
+	 * Função que adiciona a reunião ao ficheiro JSON do user associado a essa
+	 * reunião
+	 * 
+	 * @param meeting o evento associado à reunião
+	 */
+
+	@SuppressWarnings(&quot;unchecked&quot;)
+	public static void addMeetingToJSONFile(CalendarEvent meeting) {
+<span class="fc" id="L252">		String fileName = meeting.getUsername();</span>
+<span class="fc" id="L253">		JSONObject obj = createJSONObject(meeting);</span>
+<span class="fc" id="L254">		JSONParser parser = new JSONParser();</span>
+		JSONArray a;
+
+		try {
+<span class="fc" id="L258">			a = (JSONArray) parser.parse(new FileReader(JSON_FILES_PATH + fileName + &quot;.json&quot;));</span>
+<span class="fc" id="L259">			a.add(obj);</span>
+<span class="pc" id="L260">		} catch (IOException | ParseException e) {</span>
+<span class="nc" id="L261">			e.printStackTrace();</span>
+<span class="nc" id="L262">			return;</span>
+		}
+
+<span class="fc" id="L265">		writeJSONFile(a, fileName);</span>
+
+<span class="fc" id="L267">	}</span>
+
+	public static void main(String[] args) {
+<span class="nc" id="L270">		createNewCalendarFile(&quot;thgas&quot;);</span>
+//		decodeJSONFile(&quot;thgas.json&quot;);
+<span class="nc" id="L272">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span>Projeto ES (15 Dec 2022 00:14:36)</div></body></html>

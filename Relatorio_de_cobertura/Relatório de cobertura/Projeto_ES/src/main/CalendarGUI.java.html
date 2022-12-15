@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>CalendarGUI.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">Projeto ES (15 Dec 2022 00:14:36)</a> &gt; <a href="../../index.html" class="el_group">Projeto ES</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">main</a> &gt; <span class="el_source">CalendarGUI.java</span></div><h1>CalendarGUI.java</h1><pre class="source lang-java linenums">package main;
+
+/**
+ * 
+ * Classe que serve para iniciar as Interfaces gráficas da aplicação
+ *
+ */
+
+public class CalendarGUI {
+
+	private CalendarManager calendarManager;
+
+	/**
+	 * Construtor inicializa o objeto &lt;b&gt;CalendarManager&lt;/b&gt;
+	 */
+
+<span class="nc" id="L17">	public CalendarGUI() {</span>
+<span class="nc" id="L18">		this.calendarManager = new CalendarManager();</span>
+<span class="nc" id="L19">	}</span>
+
+	/**
+	 * Inicia as interfaces gráficas
+	 * 
+	 * @throws InterruptedException
+	 */
+
+	public void start() throws InterruptedException {
+<span class="nc" id="L28">		UserInformationGUI askForInformationGUI = new UserInformationGUI(calendarManager);</span>
+<span class="nc" id="L29">		askForInformationGUI.start();</span>
+<span class="nc" id="L30">		CalendarGUIFrame frame = new CalendarGUIFrame(calendarManager);</span>
+<span class="nc" id="L31">		frame.start();</span>
+<span class="nc" id="L32">		MeetingPlannerGUI m = new MeetingPlannerGUI();</span>
+<span class="nc" id="L33">	}</span>
+
+	public static void main(String[] args) {
+<span class="nc" id="L36">		CalendarGUI gui = new CalendarGUI();</span>
+		try {
+<span class="nc" id="L38">			gui.start();</span>
+<span class="nc" id="L39">		} catch (InterruptedException e) {</span>
+			// TODO Auto-generated catch block
+<span class="nc" id="L41">			e.printStackTrace();</span>
+		}
+
+<span class="nc" id="L44">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span>Projeto ES (15 Dec 2022 00:14:36)</div></body></html>

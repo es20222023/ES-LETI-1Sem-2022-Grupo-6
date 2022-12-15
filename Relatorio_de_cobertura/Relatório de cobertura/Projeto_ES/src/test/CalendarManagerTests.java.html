@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>CalendarManagerTests.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">Projeto ES (15 Dec 2022 00:14:36)</a> &gt; <a href="../../index.html" class="el_group">Projeto ES</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">test</a> &gt; <span class="el_source">CalendarManagerTests.java</span></div><h1>CalendarManagerTests.java</h1><pre class="source lang-java linenums">package test;
+
+import static org.junit.Assert.*;
+
+import java.io.File;
+import java.io.IOException;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Date;
+
+import org.apache.commons.io.FileUtils;
+import org.junit.Test;
+
+import main.CalendarEvent;
+import main.CalendarManager;
+import main.FileHandler;
+
+<span class="fc" id="L19">public class CalendarManagerTests {</span>
+
+<span class="fc" id="L21">	private String username = &quot;test/meeting_test_Copy&quot;;</span>
+
+<span class="fc" id="L23">	private final CalendarEvent c = CalendarEventTests.createTestCalendarEvent(username);</span>
+
+	@Test
+	public void testAddEvents() {
+
+<span class="fc" id="L28">		CalendarManager calendarManager = new CalendarManager();</span>
+
+<span class="fc" id="L30">		ArrayList&lt;CalendarEvent&gt; list = new ArrayList&lt;CalendarEvent&gt;();</span>
+<span class="fc" id="L31">		list.add(c);</span>
+<span class="fc" id="L32">		list.add(c);</span>
+<span class="fc" id="L33">		list.add(new CalendarEvent(c.getDateStart(), c.getDateEnd(), c.getSummary(), c.getDescription() + &quot;dif&quot;,</span>
+<span class="fc" id="L34">				c.getLocation(), username));</span>
+
+<span class="fc" id="L36">		calendarManager.addEvents(list);</span>
+
+<span class="fc" id="L38">		assertEquals(calendarManager.getEvents().size(), 2);</span>
+<span class="fc" id="L39">	}</span>
+
+	@Test
+	public void testGetEventsBetweenDates() {
+
+<span class="fc" id="L44">		CalendarManager calendarManager = new CalendarManager();</span>
+<span class="fc" id="L45">		calendarManager.addEvent(c);</span>
+
+		// Evento c começa em 2022/12/25 00:00
+		// Evento c acaba em 2022/12/26 00:00
+
+<span class="fc" id="L50">		CalendarEvent test = calendarManager.getEventsBetweenDates(null, null).get(0);</span>
+<span class="fc" id="L51">		assertEquals(test, c);</span>
+
+<span class="fc" id="L53">		Instant start = new Date(2022 - 1900, 11, 24).toInstant(); // 2022/12/24 00:00</span>
+<span class="fc" id="L54">		Instant end = new Date(2022 - 1900, 11, 27).toInstant(); // 2022/12/27 00:00</span>
+<span class="fc" id="L55">		test = calendarManager.getEventsBetweenDates(start, end).get(0);</span>
+<span class="fc" id="L56">		assertEquals(test, c);</span>
+
+<span class="fc" id="L58">		start = new Date(2022 - 1900, 11, 25, 10, 0).toInstant(); // 2022/12/25 10:00</span>
+<span class="fc" id="L59">		end = new Date(2022 - 1900, 11, 25, 11, 0).toInstant(); // 2022/12/25 11:00</span>
+<span class="fc" id="L60">		test = calendarManager.getEventsBetweenDates(start, end).get(0);</span>
+<span class="fc" id="L61">		assertEquals(test, c);</span>
+
+<span class="fc" id="L63">		start = new Date(2022 - 1900, 11, 25).toInstant(); // 2022/12/25 00:00</span>
+<span class="fc" id="L64">		end = new Date(2022 - 1900, 11, 27).toInstant(); // 2022/12/27 00:00</span>
+<span class="fc" id="L65">		test = calendarManager.getEventsBetweenDates(start, end).get(0);</span>
+<span class="fc" id="L66">		assertEquals(test, c);</span>
+
+<span class="fc" id="L68">		start = new Date(2022 - 1900, 11, 25, 10, 0).toInstant(); // 2022/12/25 10:00</span>
+<span class="fc" id="L69">		end = new Date(2022 - 1900, 11, 26).toInstant(); // 2022/12/26 00:00</span>
+<span class="fc" id="L70">		test = calendarManager.getEventsBetweenDates(start, end).get(0);</span>
+<span class="fc" id="L71">		assertEquals(test, c);</span>
+
+<span class="fc" id="L73">		start = new Date(2022 - 1900, 11, 24).toInstant(); // 2022/12/24 00:00</span>
+<span class="fc" id="L74">		end = new Date(2022 - 1900, 11, 25, 10, 0).toInstant(); // 2022/12/25 10:00</span>
+<span class="fc" id="L75">		test = calendarManager.getEventsBetweenDates(start, end).get(0);</span>
+<span class="fc" id="L76">		assertEquals(test, c);</span>
+
+<span class="fc" id="L78">		start = new Date(2022 - 1900, 11, 23).toInstant(); // 2022/12/23 00:00</span>
+<span class="fc" id="L79">		end = new Date(2022 - 1900, 11, 24).toInstant(); // 2022/12/24 00:00</span>
+<span class="fc" id="L80">		int size = calendarManager.getEventsBetweenDates(start, end).size();</span>
+<span class="fc" id="L81">		assertEquals(size, 0);</span>
+
+<span class="fc" id="L83">		start = new Date(2022 - 1900, 11, 27).toInstant(); // 2022/12/27 00:00</span>
+<span class="fc" id="L84">		end = new Date(2022 - 1900, 11, 28).toInstant(); // 2022/12/28 00:00</span>
+<span class="fc" id="L85">		size = calendarManager.getEventsBetweenDates(start, end).size();</span>
+<span class="fc" id="L86">		assertEquals(size, 0);</span>
+
+<span class="fc" id="L88">	}</span>
+
+	@Test
+	public void testIsUserAvailable() {
+<span class="fc" id="L92">		CalendarManager calendarManager = new CalendarManager();</span>
+<span class="fc" id="L93">		calendarManager.addEvent(c);</span>
+
+<span class="fc" id="L95">		Instant instant = new Date(2022 - 1900, 11, 24).toInstant(); // 2022/12/24 00:00</span>
+<span class="fc" id="L96">		boolean isAvailable = calendarManager.isUserAvailable(username, instant);</span>
+<span class="fc" id="L97">		assertEquals(isAvailable, true);</span>
+
+<span class="fc" id="L99">		instant = new Date(2022 - 1900, 11, 25).toInstant(); // 2022/12/25 00:00</span>
+<span class="fc" id="L100">		isAvailable = calendarManager.isUserAvailable(username, instant);</span>
+<span class="fc" id="L101">		assertEquals(isAvailable, false);</span>
+
+<span class="fc" id="L103">		instant = new Date(2022 - 1900, 11, 25).toInstant(); // 2022/12/25 00:00</span>
+<span class="fc" id="L104">		isAvailable = calendarManager.isUserAvailable(&quot;otherUser&quot;, instant);</span>
+<span class="fc" id="L105">		assertEquals(isAvailable, true);</span>
+
+<span class="fc" id="L107">		instant = new Date(2022 - 1900, 11, 25, 10, 0).toInstant(); // 2022/12/25 10:00</span>
+<span class="fc" id="L108">		isAvailable = calendarManager.isUserAvailable(username, instant);</span>
+<span class="fc" id="L109">		assertEquals(isAvailable, false);</span>
+
+<span class="fc" id="L111">		instant = new Date(2022 - 1900, 11, 25).toInstant(); // 2022/12/25 00:00</span>
+<span class="fc" id="L112">		Instant otherInstant = new Date(2022 - 1900, 11, 26).toInstant();// 2022/12/26 00:00</span>
+<span class="fc" id="L113">		isAvailable = calendarManager.isUserAvailable(username, instant, otherInstant);</span>
+<span class="fc" id="L114">		assertEquals(isAvailable, false);</span>
+
+<span class="fc" id="L116">		instant = new Date(2022 - 1900, 11, 25).toInstant(); // 2022/12/25 00:00</span>
+<span class="fc" id="L117">		otherInstant = new Date(2022 - 1900, 11, 26).toInstant();// 2022/12/26 00:00</span>
+<span class="fc" id="L118">		isAvailable = calendarManager.isUserAvailable(&quot;otherUser&quot;, instant, otherInstant);</span>
+<span class="fc" id="L119">		assertEquals(isAvailable, true);</span>
+
+<span class="fc" id="L121">	}</span>
+
+	@Test
+	public void testAreAllUsersAvailable() {
+<span class="fc" id="L125">		CalendarManager calendarManager = new CalendarManager();</span>
+<span class="fc" id="L126">		calendarManager.addEvent(c);</span>
+
+<span class="fc" id="L128">		String[] usernames = { username, &quot;otherUser&quot; };</span>
+
+<span class="fc" id="L130">		Instant instant = new Date(2022 - 1900, 11, 25).toInstant(); // 2022/12/25 00:00</span>
+<span class="fc" id="L131">		Instant otherInstant = new Date(2022 - 1900, 11, 26).toInstant();// 2022/12/26 00:00</span>
+<span class="fc" id="L132">		boolean areAvailable = calendarManager.areAllUsersAvailable(instant, otherInstant, usernames);</span>
+<span class="fc" id="L133">		assertEquals(areAvailable, false);</span>
+
+<span class="fc" id="L135">		String[] newUsernames = { &quot;otherUser&quot; };</span>
+<span class="fc" id="L136">		instant = new Date(2022 - 1900, 11, 25).toInstant(); // 2022/12/25 00:00</span>
+<span class="fc" id="L137">		otherInstant = new Date(2022 - 1900, 11, 26).toInstant();// 2022/12/26 00:00</span>
+<span class="fc" id="L138">		areAvailable = calendarManager.areAllUsersAvailable(instant, otherInstant, newUsernames);</span>
+<span class="fc" id="L139">		assertEquals(areAvailable, true);</span>
+<span class="fc" id="L140">	}</span>
+
+	@Test
+	public void testSugestMeeting() {
+<span class="fc" id="L144">		CalendarManager calendarManager = new CalendarManager();</span>
+
+<span class="fc" id="L146">		int meetingDuration = 30;</span>
+
+<span class="fc" id="L148">		Date tomorrow = Date.from(Instant.now().plus(1, ChronoUnit.DAYS));</span>
+<span class="fc" id="L149">		Date date = new Date(tomorrow.getYear(), tomorrow.getMonth(), tomorrow.getDate(),</span>
+<span class="fc" id="L150">				CalendarManager.MORNING_HOUR_FOR_MEETING_START, 0);</span>
+
+		// startEvent é amanha às 8h
+<span class="fc" id="L153">		Instant startEvent = date.toInstant();</span>
+<span class="fc" id="L154">		Instant endEvent = startEvent.plus(meetingDuration, ChronoUnit.MINUTES);</span>
+
+<span class="fc" id="L156">		CalendarEvent e = new CalendarEvent(startEvent, endEvent, &quot;&quot;, &quot;&quot;, &quot;&quot;, username);</span>
+<span class="fc" id="L157">		calendarManager.addEvent(e);</span>
+
+<span class="fc" id="L159">		String[] users = { username };</span>
+
+		// maxDate é amanha às 23h
+<span class="fc" id="L162">		Date maxtomorrow = Date.from(Instant.now().plus(1, ChronoUnit.DAYS));</span>
+<span class="fc" id="L163">		maxtomorrow.setHours(23);</span>
+<span class="fc" id="L164">		Instant maxDate = maxtomorrow.toInstant();</span>
+
+<span class="fc" id="L166">		ArrayList&lt;Instant&gt; instantsForMeeting = calendarManager.sugestMeeting(users, meetingDuration, true, maxDate,</span>
+<span class="fc" id="L167">				false);</span>
+
+<span class="fc" id="L169">		Date firstMeeting = Date.from(instantsForMeeting.get(0));</span>
+<span class="fc" id="L170">		date.setMinutes(meetingDuration);</span>
+<span class="fc" id="L171">		assertEquals(firstMeeting, date);</span>
+<span class="fc" id="L172">		assertEquals(instantsForMeeting.size(), CalendarManager.MAX_MEETING_DURATION_IN_MINUTES / meetingDuration - 1);</span>
+
+		// maxDate agora é daqui a dois dias
+<span class="fc" id="L175">		instantsForMeeting = calendarManager.sugestMeeting(users, meetingDuration, true,</span>
+<span class="fc" id="L176">				maxDate.plus(1, ChronoUnit.DAYS), true);</span>
+
+<span class="fc" id="L178">		assertEquals(instantsForMeeting.size(),</span>
+<span class="fc" id="L179">				2 * CalendarManager.MAX_MEETING_DURATION_IN_MINUTES / meetingDuration - 1);</span>
+<span class="fc" id="L180">	}</span>
+
+	@Test
+	public void testCreateMeeting() throws IOException {
+
+<span class="fc" id="L185">		CalendarManager calendarManager = new CalendarManager();</span>
+<span class="fc" id="L186">		String[] users = { &quot;test/meeting_test_Copy1&quot; };</span>
+		// copia o ficheiro, para não estar sempre a adicionar meetings ao mesmo
+		// ficheiro
+<span class="fc" id="L189">		File original = new File(&quot;files/json_files/test/meeting_test.json&quot;);</span>
+<span class="fc" id="L190">		File copy = new File(&quot;files/json_files/test/meeting_test_Copy1.json&quot;);</span>
+<span class="fc" id="L191">		FileUtils.copyFile(original, copy);</span>
+
+<span class="fc" id="L193">		Instant startMeeting = new Date(2022 - 1900, 11, 25).toInstant();</span>
+<span class="fc" id="L194">		Instant maxDate = new Date(2022 - 1900, 11, 27).toInstant();</span>
+
+<span class="fc" id="L196">		calendarManager.createMeeting(startMeeting, maxDate, 30, false, users, &quot;loc&quot;);</span>
+
+<span class="fc" id="L198">		CalendarEvent meeting = new CalendarEvent(startMeeting, startMeeting.plus(30, ChronoUnit.MINUTES), &quot;Meeting&quot;,</span>
+<span class="fc" id="L199">				&quot;Meeting&quot;, &quot;loc&quot;, &quot;test/meeting_test_Copy1&quot;);</span>
+<span class="fc" id="L200">		ArrayList&lt;CalendarEvent&gt; events = FileHandler.decodeJSONFile(&quot;test/meeting_test_Copy1.json&quot;);</span>
+
+<span class="fc" id="L202">		copy.delete();</span>
+
+<span class="fc" id="L204">		assertEquals(events.get(0), meeting);</span>
+
+<span class="fc" id="L206">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span>Projeto ES (15 Dec 2022 00:14:36)</div></body></html>

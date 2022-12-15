@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>CalendarGUIFrame.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">Projeto ES (15 Dec 2022 00:14:36)</a> &gt; <a href="../../index.html" class="el_group">Projeto ES</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">main</a> &gt; <span class="el_source">CalendarGUIFrame.java</span></div><h1>CalendarGUIFrame.java</h1><pre class="source lang-java linenums">package main;
+
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Properties;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
+import javax.swing.WindowConstants;
+import javax.swing.border.Border;
+
+import org.jdatepicker.impl.JDatePanelImpl;
+import org.jdatepicker.impl.JDatePickerImpl;
+import org.jdatepicker.impl.UtilDateModel;
+
+/**
+ * 
+ * Classe que constroi a &lt;b&gt;JFrame&lt;/b&gt; que vai conter a demonstração gráfica dos
+ * eventos
+ *
+ */
+
+public class CalendarGUIFrame {
+	/**
+	 * número de colunas total
+	 */
+	private static final int NUM_COLUMNS = 4;
+	/*
+	 * número de linhas ocupadas por eventos inicialmente
+	 */
+	private static final int NUM_ROWS = 10;
+	/**
+	 * número de &lt;b&gt;JComponent&lt;/b&gt; que servem de suporte à visualização, não são
+	 * eles próprios eventos
+	 */
+	private static final int NUMBER_OF_NON_EVENT_COMPONENTS = 12;
+
+	private int currentIndex;
+	private JFrame frame;
+	private CalendarManager calendarManager;
+
+	/**
+	 * Construtor
+	 * 
+	 * @param calendarManager o objeto que contém os eventos que vão ser mostrados
+	 */
+
+<span class="nc" id="L59">	public CalendarGUIFrame(CalendarManager calendarManager) {</span>
+<span class="nc" id="L60">		this.calendarManager = calendarManager;</span>
+<span class="nc" id="L61">		currentIndex = NUM_ROWS;</span>
+<span class="nc" id="L62">		frame = new JFrame();</span>
+<span class="nc" id="L63">	}</span>
+
+	/**
+	 * Inicia a frame
+	 */
+
+	public void start() {
+<span class="nc" id="L70">		addCalendarFrameContent();</span>
+<span class="nc" id="L71">	}</span>
+
+	/**
+	 * Adiciona todos os componentes à frame e implementa &lt;b&gt;ActionListener&lt;/b&gt;s que
+	 * fazem as várias interações
+	 */
+
+	private void addCalendarFrameContent() {
+<span class="nc" id="L79">		frame.setSize(500, 300);</span>
+<span class="nc" id="L80">		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);</span>
+<span class="nc" id="L81">		frame.setLayout(new GridLayout(NUMBER_OF_NON_EVENT_COMPONENTS / NUM_COLUMNS + NUM_ROWS, NUM_COLUMNS));</span>
+
+		// componentes datepicker
+<span class="nc" id="L84">		UtilDateModel model1 = new UtilDateModel();</span>
+<span class="nc" id="L85">		UtilDateModel model2 = new UtilDateModel();</span>
+<span class="nc" id="L86">		Properties p = DateLabelFormatter.fillProperties();</span>
+<span class="nc" id="L87">		JDatePanelImpl datePanel1 = new JDatePanelImpl(model1, p);</span>
+<span class="nc" id="L88">		JDatePanelImpl datePanel2 = new JDatePanelImpl(model2, p);</span>
+<span class="nc" id="L89">		JDatePickerImpl datePickerStart = new JDatePickerImpl(datePanel1, new DateLabelFormatter()); // datePicker.getModel().getValue();</span>
+<span class="nc" id="L90">		JDatePickerImpl datePickerEnd = new JDatePickerImpl(datePanel2, new DateLabelFormatter());</span>
+
+		// componente Combobox
+<span class="nc" id="L93">		String[] numberOfRowsPerPage = { &quot;5&quot;, &quot;10&quot;, &quot;15&quot;, &quot;20&quot; };</span>
+<span class="nc" id="L94">		JComboBox&lt;String&gt; box = new JComboBox&lt;String&gt;(numberOfRowsPerPage); // box.getSelectedIndex()</span>
+
+<span class="nc" id="L96">		box.setSelectedIndex(1);</span>
+
+<span class="nc" id="L98">		JButton refreshButton = new JButton(&quot;Carregar eventos entre as datas escolhidas&quot;);</span>
+
+		// componentes Header
+<span class="nc" id="L101">		JLabel userHeader = new JLabel(&quot;User&quot;, SwingConstants.CENTER);</span>
+<span class="nc" id="L102">		JLabel dateHeader = new JLabel(&quot;Date&quot;, SwingConstants.CENTER);</span>
+<span class="nc" id="L103">		JLabel locationHeader = new JLabel(&quot;Location&quot;, SwingConstants.CENTER);</span>
+<span class="nc" id="L104">		JLabel summaryHeader = new JLabel(&quot;Summary&quot;, SwingConstants.CENTER);</span>
+
+<span class="nc" id="L106">		setBorder(userHeader);</span>
+<span class="nc" id="L107">		setBorder(dateHeader);</span>
+<span class="nc" id="L108">		setBorder(locationHeader);</span>
+<span class="nc" id="L109">		setBorder(summaryHeader);</span>
+
+		// botões para andar para trás/frente no tempo
+<span class="nc" id="L112">		JButton goBack = new JButton(&quot;&lt;&quot;);</span>
+<span class="nc" id="L113">		JButton goForward = new JButton(&quot;&gt;&quot;);</span>
+
+<span class="nc" id="L115">		frame.add(goBack);</span>
+<span class="nc" id="L116">		frame.add(new JLabel(&quot;Move back in time&quot;, SwingConstants.CENTER));</span>
+<span class="nc" id="L117">		frame.add(new JLabel(&quot;Move forward in time&quot;, SwingConstants.CENTER));</span>
+<span class="nc" id="L118">		frame.add(goForward);</span>
+
+<span class="nc" id="L120">		frame.add(datePickerStart);</span>
+<span class="nc" id="L121">		frame.add(datePickerEnd);</span>
+<span class="nc" id="L122">		frame.add(box);</span>
+<span class="nc" id="L123">		frame.add(refreshButton);</span>
+
+<span class="nc" id="L125">		frame.add(userHeader);</span>
+<span class="nc" id="L126">		frame.add(dateHeader);</span>
+<span class="nc" id="L127">		frame.add(locationHeader);</span>
+<span class="nc" id="L128">		frame.add(summaryHeader);</span>
+
+<span class="nc" id="L130">		addEventsToFrame(calendarManager.getEvents(), NUM_ROWS, 0, NUM_ROWS);</span>
+
+//		ArrayList&lt;Date&gt; dates = new ArrayList&lt;&gt;();
+<span class="nc" id="L133">		ArrayList&lt;CalendarEvent&gt; events = calendarManager.getEvents();</span>
+
+//		datePicker.addActionListener(new ActionListener() {
+//
+//			@Override
+//			public void actionPerformed(ActionEvent arg0) {
+//				dates.add((Date) datePicker.getModel().getValue());
+//				System.out.println(&quot;Date added&quot;);
+//			}
+//		});
+
+<span class="nc" id="L144">		refreshButton.addActionListener(new ActionListener() {</span>
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L148">				System.out.println(&quot;Refresh&quot;);</span>
+
+				// remover componentes antigos
+<span class="nc" id="L151">				removeComponentsFromFrame();</span>
+
+				// adicionar novos
+<span class="nc" id="L154">				int numEventsPerPage = Integer.parseInt(numberOfRowsPerPage[box.getSelectedIndex()]);</span>
+<span class="nc" id="L155">				frame.setLayout(</span>
+<span class="nc" id="L156">						new GridLayout(NUMBER_OF_NON_EVENT_COMPONENTS / NUM_COLUMNS + numEventsPerPage, NUM_COLUMNS));</span>
+
+<span class="nc" id="L158">				Date firstDate = (Date) (datePickerStart.getModel().getValue());</span>
+<span class="nc" id="L159">				Date lastDate = (Date) (datePickerEnd.getModel().getValue());</span>
+
+<span class="nc bnc" id="L161" title="All 4 branches missed.">				if (firstDate == null || lastDate == null) {</span>
+<span class="nc" id="L162">					events.clear();</span>
+<span class="nc" id="L163">					events.addAll(calendarManager.getEventsBetweenDates(null, null));</span>
+<span class="nc" id="L164">				} else {</span>
+
+<span class="nc" id="L166">					Instant firstInstant = firstDate.toInstant();</span>
+<span class="nc" id="L167">					Instant lastInstant = lastDate.toInstant();</span>
+<span class="nc" id="L168">					events.clear();</span>
+<span class="nc" id="L169">					events.addAll(calendarManager.getEventsBetweenDates(firstInstant, lastInstant));</span>
+				}
+//				if (dates.size() &gt;= 2) {
+//					dates.sort(null);
+//					Instant firstInstant = dates.get(0).toInstant();
+//					Instant lastInstant = dates.get(dates.size() - 1).toInstant();
+//					events.clear();
+//					events.addAll(calendarManager.getEventsBetweenDates(firstInstant, lastInstant));
+//
+//				} else {
+//					events.clear();
+//					events.addAll(calendarManager.getEventsBetweenDates(null, null));
+//				}
+<span class="nc" id="L182">				addEventsToFrame(events, numEventsPerPage, 0, numEventsPerPage);</span>
+<span class="nc" id="L183">				frame.revalidate();</span>
+<span class="nc" id="L184">				frame.repaint();</span>
+<span class="nc" id="L185">			}</span>
+		});
+
+<span class="nc" id="L188">		goForward.addActionListener(new ActionListener() {</span>
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L192">				int numEventsPerPage = Integer.parseInt(numberOfRowsPerPage[box.getSelectedIndex()]);</span>
+<span class="nc" id="L193">				removeComponentsFromFrame();</span>
+<span class="nc" id="L194">				addEventsToFrame(events, numEventsPerPage, Integer.min(currentIndex, events.size() - numEventsPerPage),</span>
+<span class="nc" id="L195">						Integer.min(currentIndex + numEventsPerPage, events.size()));</span>
+
+<span class="nc" id="L197">				frame.revalidate();</span>
+<span class="nc" id="L198">				frame.repaint();</span>
+<span class="nc" id="L199">			}</span>
+		});
+
+<span class="nc" id="L202">		goBack.addActionListener(new ActionListener() {</span>
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L206">				int numEventsPerPage = Integer.parseInt(numberOfRowsPerPage[box.getSelectedIndex()]);</span>
+<span class="nc" id="L207">				removeComponentsFromFrame();</span>
+<span class="nc" id="L208">				addEventsToFrame(events, numEventsPerPage, Integer.max(0, currentIndex - 2 * numEventsPerPage),</span>
+<span class="nc" id="L209">						Integer.max(currentIndex - numEventsPerPage, numEventsPerPage));</span>
+
+<span class="nc" id="L211">				frame.revalidate();</span>
+<span class="nc" id="L212">				frame.repaint();</span>
+
+<span class="nc" id="L214">			}</span>
+		});
+
+<span class="nc" id="L217">		frame.pack();</span>
+<span class="nc" id="L218">		frame.setVisible(true);</span>
+<span class="nc" id="L219">	}</span>
+
+	/**
+	 * Remove da frame os componentes que fazem parte dos eventos
+	 */
+
+	private void removeComponentsFromFrame() {
+<span class="nc" id="L226">		Component[] components = frame.getContentPane().getComponents();</span>
+<span class="nc bnc" id="L227" title="All 2 branches missed.">		for (int i = NUMBER_OF_NON_EVENT_COMPONENTS; i &lt; components.length; i++)</span>
+<span class="nc" id="L228">			frame.remove(components[i]);</span>
+<span class="nc" id="L229">	}</span>
+
+	/**
+	 * Adiciona à frame os eventos dados
+	 * 
+	 * @param events         a lista que contém os eventos a adicionar
+	 * @param numberOfEvents a quantidade de eventos a adicionar
+	 * @param start          o índice da lista onde é para começar a adicionar
+	 *                       eventos
+	 * @param end            o último indice da lista a adicionar
+	 */
+
+	private void addEventsToFrame(ArrayList&lt;CalendarEvent&gt; events, int numberOfEvents, int start, int end) {
+<span class="nc bnc" id="L242" title="All 4 branches missed.">		for (int i = Math.max(start, 0); i &lt; Math.min(end, events.size()) &amp;&amp; events.size() &gt; 0; i++) {</span>
+<span class="nc bnc" id="L243" title="All 2 branches missed.">			if (numberOfEvents &lt;= 0)</span>
+<span class="nc" id="L244">				break;</span>
+<span class="nc" id="L245">			numberOfEvents--;</span>
+
+<span class="nc" id="L247">			CalendarEvent event = events.get(i);</span>
+<span class="nc" id="L248">			JLabel userLabel = new JLabel(event.getUsername());</span>
+<span class="nc" id="L249">			JLabel dateLabel = new JLabel(event.getDateStartString() + &quot; to &quot; + event.getDateEndString());</span>
+<span class="nc" id="L250">			JLabel locationLabel = new JLabel(event.getLocation());</span>
+<span class="nc" id="L251">			JLabel summaryLabel = new JLabel(event.getSummary());</span>
+
+<span class="nc bnc" id="L253" title="All 2 branches missed.">			boolean color = i % 2 == 0;</span>
+<span class="nc" id="L254">			changeLabelBackgroundColor(userLabel, color);</span>
+<span class="nc" id="L255">			changeLabelBackgroundColor(dateLabel, color);</span>
+<span class="nc" id="L256">			changeLabelBackgroundColor(locationLabel, color);</span>
+<span class="nc" id="L257">			changeLabelBackgroundColor(summaryLabel, color);</span>
+
+<span class="nc" id="L259">			frame.add(userLabel);</span>
+<span class="nc" id="L260">			frame.add(dateLabel);</span>
+<span class="nc" id="L261">			frame.add(locationLabel);</span>
+<span class="nc" id="L262">			frame.add(summaryLabel);</span>
+		}
+		// Caso não haja uma qunatidade de numberOfEvents durante aquelas datas, para
+		// nao desformatar a GUI
+<span class="nc bnc" id="L266" title="All 2 branches missed.">		if (numberOfEvents &gt; 0)</span>
+<span class="nc bnc" id="L267" title="All 2 branches missed.">			for (int i = numberOfEvents; i &gt; 0; i--) {</span>
+<span class="nc" id="L268">				frame.add(new JLabel(&quot;&quot;));</span>
+<span class="nc" id="L269">				frame.add(new JLabel(&quot;&quot;));</span>
+<span class="nc" id="L270">				frame.add(new JLabel(&quot;&quot;));</span>
+			}
+<span class="nc" id="L272">		currentIndex = Math.min(end, events.size());</span>
+<span class="nc" id="L273">		frame.pack();</span>
+<span class="nc" id="L274">	}</span>
+
+	/**
+	 * Função que muda a cor de fundo das labels
+	 * 
+	 * @param label label a ser mudada
+	 * @param color decide a cor a ser usada
+	 */
+
+	private void changeLabelBackgroundColor(JLabel label, boolean color) {
+<span class="nc" id="L284">		setBorder(label);</span>
+
+<span class="nc" id="L286">		label.setOpaque(true);</span>
+<span class="nc bnc" id="L287" title="All 2 branches missed.">		if (color)</span>
+<span class="nc" id="L288">			label.setBackground(Color.GRAY);</span>
+		else
+<span class="nc" id="L290">			label.setBackground(Color.WHITE);</span>
+<span class="nc" id="L291">	}</span>
+
+	/**
+	 * Função que adiciona uma border a uma &lt;b&gt;JLabel&lt;/b&gt;
+	 * 
+	 * @param label a label a ser mudada
+	 */
+
+	private void setBorder(JLabel label) {
+<span class="nc" id="L300">		Border border = BorderFactory.createLineBorder(Color.BLACK);</span>
+<span class="nc" id="L301">		label.setBorder(border);</span>
+<span class="nc" id="L302">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span>Projeto ES (15 Dec 2022 00:14:36)</div></body></html>

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>UserInformationGUI.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">Projeto ES (15 Dec 2022 00:14:36)</a> &gt; <a href="../../index.html" class="el_group">Projeto ES</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">main</a> &gt; <span class="el_source">UserInformationGUI.java</span></div><h1>UserInformationGUI.java</h1><pre class="source lang-java linenums">package main;
+
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.util.ArrayList;
+
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.WindowConstants;
+
+/**
+ * 
+ * Classe que lida com a parte da interface gráfica que pede ao utilizador o seu
+ * nome o o seu URL
+ *
+ */
+
+public class UserInformationGUI {
+
+	private JFrame frame;
+	private CalendarManager calendarManager;
+<span class="nc" id="L28">	private boolean userInputFrameClosed = false;</span>
+
+	/**
+	 * Contrutor
+	 * 
+	 * @param calendarManager calendarManager a ser guardado
+	 */
+
+<span class="nc" id="L36">	public UserInformationGUI(CalendarManager calendarManager) {</span>
+<span class="nc" id="L37">		this.calendarManager = calendarManager;</span>
+<span class="nc" id="L38">		frame = new JFrame(&quot;Introduza os seus dados&quot;);</span>
+<span class="nc" id="L39">	}</span>
+
+	/**
+	 * Função que inicia a GUI
+	 * 
+	 * @return true quando já se tem os inputs necessários, para que a frame da
+	 *         outra classe se possa iniciar
+	 * @throws InterruptedException
+	 */
+
+	public boolean start() throws InterruptedException {
+<span class="nc" id="L50">		addUserInputFrameContent();</span>
+<span class="nc bnc" id="L51" title="All 2 branches missed.">		while (!userInputFrameClosed)</span>
+<span class="nc" id="L52">			Thread.sleep(100);</span>
+<span class="nc" id="L53">		return true;</span>
+	}
+
+	/**
+	 * 
+	 * Função que adiciona à frame todos os componentes
+	 * 
+	 */
+
+	private void addUserInputFrameContent() {
+<span class="nc" id="L63">		frame.setSize(500, 300);</span>
+<span class="nc" id="L64">		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);</span>
+
+<span class="nc" id="L66">		frame.setLayout(new GridLayout(3, 2));</span>
+
+<span class="nc" id="L68">		JLabel askNameLabel = new JLabel(&quot;Introduza o seu nome&quot;, SwingConstants.CENTER);</span>
+<span class="nc" id="L69">		JTextField askName = new JTextField();</span>
+
+<span class="nc" id="L71">		JLabel askURLLabel = new JLabel(&quot;Introduza o seu URL&quot;, SwingConstants.CENTER);</span>
+<span class="nc" id="L72">		JTextField askURL = new JTextField();</span>
+
+<span class="nc" id="L74">		JCheckBox checkBox = new JCheckBox(&quot;Individual (x) / Grupo ()&quot;);</span>
+<span class="nc" id="L75">		JButton buttonSolo = new JButton(&quot;Abrir calendário&quot;);</span>
+
+<span class="nc" id="L77">		frame.add(askNameLabel);</span>
+<span class="nc" id="L78">		frame.add(askName);</span>
+<span class="nc" id="L79">		frame.add(askURLLabel);</span>
+<span class="nc" id="L80">		frame.add(askURL);</span>
+<span class="nc" id="L81">		frame.add(checkBox);</span>
+<span class="nc" id="L82">		frame.add(buttonSolo);</span>
+
+<span class="nc" id="L84">		buttonSolo.addActionListener(new ActionListener() {</span>
+			@Override
+			public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L87">				String name = askName.getText();</span>
+<span class="nc" id="L88">				String URL = askURL.getText();</span>
+
+<span class="nc" id="L90">				frame.setVisible(false);</span>
+<span class="nc" id="L91">				frame.dispose();</span>
+
+<span class="nc" id="L93">				File txtFileDir = new File(&quot;files/text_files/&quot; + name + &quot;.txt&quot;);</span>
+<span class="nc bnc" id="L94" title="All 2 branches missed.">				if (!txtFileDir.exists()) {</span>
+<span class="nc" id="L95">					UrlReader.Urlcatcher(URL, name);</span>
+<span class="nc" id="L96">					FileHandler.createNewCalendarFile(name);</span>
+				}
+<span class="nc" id="L98">				ArrayList&lt;CalendarEvent&gt; events = FileHandler.decodeJSONFile(name + &quot;.json&quot;);</span>
+<span class="nc bnc" id="L99" title="All 2 branches missed.">				if (checkBox.isSelected())</span>
+<span class="nc" id="L100">					calendarManager.addEvents(events);</span>
+				else
+<span class="nc" id="L102">					calendarManager.fillWithSavedEvents();</span>
+<span class="nc" id="L103">				userInputFrameClosed = true;</span>
+<span class="nc" id="L104">			}</span>
+		});
+
+<span class="nc" id="L107">		frame.pack();</span>
+<span class="nc" id="L108">		frame.setVisible(true);</span>
+<span class="nc" id="L109">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span>Projeto ES (15 Dec 2022 00:14:36)</div></body></html>

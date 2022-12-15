@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>CalendarEvent.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">Projeto ES (15 Dec 2022 00:14:36)</a> &gt; <a href="../../index.html" class="el_group">Projeto ES</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">main</a> &gt; <span class="el_source">CalendarEvent.java</span></div><h1>CalendarEvent.java</h1><pre class="source lang-java linenums">package main;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.format.DateTimeParseException;
+import java.util.Date;
+
+/**
+ * Classe que contém todas as informações importantes para definir um evento no
+ * calendário
+ * 
+ * @author thgas
+ *
+ */
+
+public class CalendarEvent implements Comparable&lt;CalendarEvent&gt; {
+
+	private Instant dateStart;
+	private Instant dateEnd;
+	private String summary;
+	private String description;
+	private String location;
+	private String username;
+
+	/**
+	 * Construtor que recebe datas no formato &lt;b&gt;String&lt;/b&gt;
+	 * 
+	 * @param dateStart   a data de início do evento
+	 * @param dateEnd     a data de fim do evento
+	 * @param summary     o sumário do evento
+	 * @param description a descrição do evento
+	 * @param location    a localização do evento
+	 * @param username    o nome da pessoa a quem este evento está associado
+	 */
+
+<span class="fc" id="L37">	public CalendarEvent(String dateStart, String dateEnd, String summary, String description, String location,</span>
+			String username) {
+<span class="fc" id="L39">		this.dateStart = parseDate(dateStart);</span>
+<span class="fc" id="L40">		this.dateEnd = parseDate(dateEnd);</span>
+<span class="fc" id="L41">		this.summary = summary;</span>
+<span class="fc" id="L42">		this.description = description;</span>
+<span class="fc" id="L43">		this.location = location;</span>
+<span class="fc" id="L44">		this.username = username;</span>
+<span class="fc" id="L45">	}</span>
+
+	/**
+	 * Construtor que recebe datas no formato &lt;b&gt;Instant&lt;/b&gt;
+	 * 
+	 * @param dateStart   a data de início do evento
+	 * @param dateEnd     a data de fim do evento
+	 * @param summary     o sumário do evento
+	 * @param description a descrição do evento
+	 * @param location    a localização do evento
+	 * @param username    o nome da pessoa a quem este evento está associado
+	 */
+
+<span class="fc" id="L58">	public CalendarEvent(Instant dateStart, Instant dateEnd, String summary, String description, String location,</span>
+			String username) {
+<span class="fc" id="L60">		this.dateStart = dateStart;</span>
+<span class="fc" id="L61">		this.dateEnd = dateEnd;</span>
+<span class="fc" id="L62">		this.summary = summary;</span>
+<span class="fc" id="L63">		this.description = description;</span>
+<span class="fc" id="L64">		this.location = location;</span>
+<span class="fc" id="L65">		this.username = username;</span>
+<span class="fc" id="L66">	}</span>
+
+	/**
+	 * Função que recebe uma string com uma data e a retorna como um objeto do tipo
+	 * &lt;b&gt;Date&lt;/b&gt;
+	 * 
+	 * @param date String de data que segue o formato &lt;i&gt;yyyymmddTHHmmssZ&lt;/i&gt;
+	 * @return objeto Date que guarda a data
+	 */
+
+	private Date modifyStringToDateFormat(String date) {
+
+<span class="fc" id="L78">		date = date.replace(&quot;T&quot;, &quot;&quot;);</span>
+<span class="fc" id="L79">		SimpleDateFormat format = new SimpleDateFormat(&quot;yyyyMMddHHmmss&quot;);</span>
+		try {
+<span class="fc" id="L81">			Date dateToReturn = format.parse(date);</span>
+			// mudar para o fuso horario correto
+<span class="fc" id="L83">			dateToReturn.setHours(dateToReturn.getHours());</span>
+<span class="fc" id="L84">			return dateToReturn;</span>
+<span class="nc" id="L85">		} catch (ParseException e) {</span>
+<span class="nc" id="L86">			System.out.println(&quot;Erro a dar parse a data&quot;);</span>
+<span class="nc" id="L87">			return null;</span>
+		}
+	}
+
+	/**
+	 * Função que dá parse a uma &lt;b&gt;String&lt;/b&gt; com uma data e a retorna como uma
+	 * objeto do tipo &lt;b&gt;Instant&lt;/b&gt;
+	 * 
+	 * @param date data em texto
+	 * @return objeto &lt;b&gt;Instant&lt;/b&gt; com a data
+	 */
+
+	private Instant parseDate(String date) {
+		Instant instant;
+		try {
+<span class="fc" id="L102">			instant = Instant.parse(date); // quando se descodifica o ficheiro JSON é mais simples fazer parse a data</span>
+											// assim
+<span class="fc" id="L104">		} catch (DateTimeParseException e) {</span>
+<span class="fc" id="L105">			Date d = modifyStringToDateFormat(date); // já a data no ficheiro texto é mais simples dar parse como Date e</span>
+														// só depois converter para Instant
+<span class="fc" id="L107">			return d.toInstant();</span>
+		}
+
+<span class="fc" id="L110">		return instant;</span>
+	}
+
+	/**
+	 * Obtém a data de início do evento
+	 * 
+	 * @return a data de início do evento
+	 */
+
+	public Instant getDateStart() {
+<span class="fc" id="L120">		return dateStart;</span>
+	}
+
+	/**
+	 * Obtém a data de fim do evento
+	 * 
+	 * @return a data de fim do evento
+	 */
+
+	public Instant getDateEnd() {
+<span class="fc" id="L130">		return dateEnd;</span>
+	}
+
+	/**
+	 * Obtém o sumário do evento
+	 * 
+	 * @return o sumário do evento
+	 */
+
+	public String getSummary() {
+<span class="fc" id="L140">		return summary;</span>
+	}
+
+	/**
+	 * Obtém a descrição do evento
+	 * 
+	 * @return a descrição do evento
+	 */
+
+	public String getDescription() {
+<span class="fc" id="L150">		return description;</span>
+	}
+
+	/**
+	 * Obtém a localização do evento
+	 * 
+	 * @return a localização do evento
+	 */
+
+	public String getLocation() {
+<span class="fc" id="L160">		return location;</span>
+	}
+
+	/**
+	 * Obtém o nome da pessoa a qual este evento está associado
+	 * 
+	 * @return o nome da pessoa a qual este evento está associado
+	 */
+
+	public String getUsername() {
+<span class="fc" id="L170">		return username;</span>
+	}
+
+	@Override
+	public String toString() {
+<span class="nc" id="L175">		String string = &quot;Data de início: &quot; + getDateStart().toString() + &quot;\nData de fim: &quot; + getDateEnd().toString()</span>
+<span class="nc" id="L176">				+ &quot;\nSumario: &quot; + getSummary() + &quot;\nDescricao: &quot; + getDescription() + &quot;\nLocalizacao: &quot; + getLocation();</span>
+<span class="nc" id="L177">		return string;</span>
+	}
+
+	/**
+	 * Obtém a data de início do evento formatada de acordo com o método
+	 * {@link #dateInstantToString()}
+	 * 
+	 * @return data de início do evento formatada
+	 */
+
+	public String getDateStartString() {
+<span class="nc" id="L188">		return dateInstantToString(dateStart);</span>
+	}
+
+	/**
+	 * Obtém a data de fim do evento formatada de acordo com o método
+	 * {@link #dateInstantToString()}
+	 * 
+	 * @return data de fim do evento formatada
+	 */
+
+	public String getDateEndString() {
+<span class="nc" id="L199">		return dateInstantToString(dateEnd);</span>
+	}
+
+	/**
+	 * Devolve a data em texto formatada de acordo com: YYYY/MM/DD HH:mm
+	 * 
+	 * @param instant data a ser formatada
+	 * @return a data em texto
+	 */
+
+	public static String dateInstantToString(Instant instant) {
+<span class="fc" id="L210">		Date date = Date.from(instant);</span>
+<span class="fc" id="L211">		String str = (date.getYear() + 1900) + &quot;/&quot; + (date.getMonth() + 1) + &quot;/&quot; + date.getDate() + &quot; &quot;</span>
+<span class="pc bpc" id="L212" title="1 of 2 branches missed.">				+ (date.getHours() &lt; 10 ? &quot;0&quot; + date.getHours() : date.getHours()) + &quot;:&quot;</span>
+<span class="pc bpc" id="L213" title="1 of 2 branches missed.">				+ (date.getMinutes() == 0 ? &quot;00&quot; : date.getMinutes());</span>
+<span class="fc" id="L214">		return str;</span>
+	}
+
+	@Override
+	public int compareTo(CalendarEvent c) {
+<span class="fc" id="L219">		return this.dateStart.compareTo(c.dateStart);</span>
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+<span class="fc bfc" id="L224" title="All 2 branches covered.">		if (this == obj)</span>
+<span class="fc" id="L225">			return true;</span>
+<span class="fc bfc" id="L226" title="All 2 branches covered.">		if (obj == null)</span>
+<span class="fc" id="L227">			return false;</span>
+<span class="fc bfc" id="L228" title="All 2 branches covered.">		if (getClass() != obj.getClass())</span>
+<span class="fc" id="L229">			return false;</span>
+<span class="fc" id="L230">		CalendarEvent event = (CalendarEvent) obj;</span>
+
+<span class="pc bpc" id="L232" title="3 of 6 branches missed.">		return username.equals(event.username) &amp;&amp; dateStart.equals(event.dateStart) &amp;&amp; dateEnd.equals(event.dateEnd)</span>
+<span class="pc bpc" id="L233" title="1 of 4 branches missed.">				&amp;&amp; summary.equals(event.summary) &amp;&amp; description.equals(event.description)</span>
+<span class="pc bpc" id="L234" title="1 of 2 branches missed.">				&amp;&amp; location.equals(event.location);</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span>Projeto ES (15 Dec 2022 00:14:36)</div></body></html>

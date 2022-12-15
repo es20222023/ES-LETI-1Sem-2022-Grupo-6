@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>CalendarEventTests.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">Projeto ES (15 Dec 2022 00:14:36)</a> &gt; <a href="../../index.html" class="el_group">Projeto ES</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">test</a> &gt; <span class="el_source">CalendarEventTests.java</span></div><h1>CalendarEventTests.java</h1><pre class="source lang-java linenums">package test;
+
+import static org.junit.Assert.assertEquals;
+
+import java.time.Instant;
+import java.util.Date;
+
+import org.junit.jupiter.api.Test;
+
+import main.CalendarEvent;
+
+<span class="fc" id="L12">public class CalendarEventTests {</span>
+
+<span class="fc" id="L14">	private static Instant dateStart = new Date(2022 - 1900, 11, 25).toInstant();</span>
+<span class="fc" id="L15">	private static Instant dateEnd = new Date(2022 - 1900, 11, 26).toInstant();</span>
+<span class="fc" id="L16">	private static String summary = &quot;test_summary&quot;;</span>
+<span class="fc" id="L17">	private static String description = &quot;test_description&quot;;</span>
+<span class="fc" id="L18">	private static String location = &quot;test_location&quot;;</span>
+<span class="fc" id="L19">	private static String username = &quot;test_username&quot;;</span>
+
+<span class="fc" id="L21">	private final CalendarEvent c = createTestCalendarEvent(username);</span>
+
+	public static CalendarEvent createTestCalendarEvent(String name) {
+<span class="fc" id="L24">		return new CalendarEvent(dateStart, dateEnd, summary, description, location, name);</span>
+
+	}
+
+	@Test
+	public void testEquals() {
+<span class="fc" id="L30">		assertEquals(c.equals(c), true);</span>
+<span class="fc" id="L31">		assertEquals(c.equals(null), false);</span>
+<span class="fc" id="L32">		assertEquals(c.equals(1), false);</span>
+<span class="fc" id="L33">		assertEquals(c.equals(new CalendarEvent(dateStart, dateEnd, summary, description, location, username)), true);</span>
+<span class="fc" id="L34">	}</span>
+
+	@Test
+	public void testDataInstantToString() {
+<span class="fc" id="L38">		String expected = &quot;2022/12/25 00:00&quot;;</span>
+<span class="fc" id="L39">		assertEquals(CalendarEvent.dateInstantToString(dateStart), expected);</span>
+<span class="fc" id="L40">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span>Projeto ES (15 Dec 2022 00:14:36)</div></body></html>

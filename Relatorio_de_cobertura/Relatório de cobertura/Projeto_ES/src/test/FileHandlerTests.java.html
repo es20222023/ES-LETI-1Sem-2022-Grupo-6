@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>FileHandlerTests.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">Projeto ES (15 Dec 2022 00:14:36)</a> &gt; <a href="../../index.html" class="el_group">Projeto ES</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">test</a> &gt; <span class="el_source">FileHandlerTests.java</span></div><h1>FileHandlerTests.java</h1><pre class="source lang-java linenums">package test;
+
+import static org.junit.Assert.*;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import org.apache.commons.io.FileUtils;
+import org.junit.Test;
+
+import main.CalendarEvent;
+import main.FileHandler;
+
+<span class="fc" id="L15">public class FileHandlerTests {</span>
+
+<span class="fc" id="L17">	private String username = &quot;test/meeting_test_Copy&quot;;</span>
+
+<span class="fc" id="L19">	private final CalendarEvent c = CalendarEventTests.createTestCalendarEvent(username);</span>
+
+	@Test
+	public void testCreateNewCalendarFile() throws IOException {
+<span class="fc" id="L23">		FileHandler.createNewCalendarFile(&quot;test/thgas-teste&quot;);</span>
+<span class="fc" id="L24">		File file1 = new File(&quot;files/json_files/test/thgas-teste.json&quot;);</span>
+<span class="fc" id="L25">		File file2 = new File(&quot;files/json_files/test/create_Calendar_Test.json&quot;);</span>
+
+<span class="fc" id="L27">		boolean isTwoEqual = FileUtils.contentEquals(file1, file2);</span>
+<span class="fc" id="L28">		assertEquals(isTwoEqual, true);</span>
+<span class="fc" id="L29">		file1.delete();</span>
+
+<span class="fc" id="L31">	}</span>
+
+	@Test
+	public void testAddMeetingToJSONFileAndDecodeJSONFile() throws IOException {
+
+		// copia o ficheiro, para não estar sempre a adicionar meetings ao mesmo
+		// ficheiro
+<span class="fc" id="L38">		File original = new File(&quot;files/json_files/test/meeting_test.json&quot;);</span>
+<span class="fc" id="L39">		File copy = new File(&quot;files/json_files/test/meeting_test_Copy.json&quot;);</span>
+<span class="fc" id="L40">		FileUtils.copyFile(original, copy);</span>
+
+		// adiciona a meeting ao ficheiro copiado
+<span class="fc" id="L43">		FileHandler.addMeetingToJSONFile(c);</span>
+
+		// vai buscar as meetings do ficheiro copiado
+<span class="fc" id="L46">		ArrayList&lt;CalendarEvent&gt; meetingTest = FileHandler.decodeJSONFile(username + &quot;.json&quot;);</span>
+
+		// vê se a última criada é igual ao esperado
+<span class="fc" id="L49">		assertEquals(c, meetingTest.get(0));</span>
+
+<span class="fc" id="L51">		copy.delete();</span>
+<span class="fc" id="L52">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span>Projeto ES (15 Dec 2022 00:14:36)</div></body></html>
