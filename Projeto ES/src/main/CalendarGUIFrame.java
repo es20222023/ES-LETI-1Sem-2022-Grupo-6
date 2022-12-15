@@ -270,7 +270,7 @@ public class CalendarGUIFrame {
 				frame.add(new JLabel(""));
 			}
 		currentIndex = Math.min(end, events.size());
-		frame.pack();
+//		frame.pack();
 	}
 
 	/**
